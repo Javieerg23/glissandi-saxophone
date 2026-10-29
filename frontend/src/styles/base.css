@@ -1,0 +1,41 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Mobile-first: el diseño base es el de móvil; la barra inferior fija reserva su
+   altura. A partir de 1024 px la navegación pasa a ser lateral. */
+.app-main {
+  padding: var(--space-3);
+  padding-bottom: calc(var(--nav-bar-height) + var(--space-3));
+}
+
+@media (min-width: 600px) {
+  .app-main {
+    padding: var(--space-4);
+    padding-bottom: calc(var(--nav-bar-height) + var(--space-4));
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-main {
+    margin-left: var(--nav-side-width);
+    padding-bottom: var(--space-4);
+  }
+}
