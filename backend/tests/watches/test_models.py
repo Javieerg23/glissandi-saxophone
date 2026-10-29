@@ -1,7 +1,9 @@
 """Tests de los modelos de ``watches``. / Tests for ``watches`` models."""
 
 import pytest
+from django.contrib import admin
 from django.db.models import ProtectedError
+from django.test import RequestFactory
 
 from core.models import AppendOnlyError
 from watches.models import Watch, WatchRun
@@ -61,10 +63,8 @@ def test_watch_str_is_its_name() -> None:
 
 
 def test_watch_run_admin_is_read_only() -> None:
-    from django.contrib.admin import site
-
-    model_admin = site._registry[WatchRun]
-    request = None
-    assert model_admin.has_add_permission(request) is False  # type: ignore[arg-type]
-    assert model_admin.has_change_permission(request) is False  # type: ignore[arg-type]
-    assert model_admin.has_delete_permission(request) is False  # type: ignore[arg-type]
+    model_admin = admin.site._registry[WatchRun]
+    request = RequestFactory().get("/")
+    assert model_admin.has_add_permission(request) is False
+    assert model_admin.has_change_permission(request) is False
+    assert model_admin.has_delete_permission(request) is False

@@ -8,7 +8,7 @@ from simple_history.models import HistoricalRecords
 from core.models import AppendOnlyModel
 
 
-class Watch(models.Model):  # type: ignore[django-manager-missing]  # django-stubs no ve el manager heredado de AppendOnlyModel
+class Watch(models.Model):
     """Vigilancia de novedades: nombre y si está activa.
 
     New-release watch: its name and whether it is active. Editable, so every
