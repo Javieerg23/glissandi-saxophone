@@ -1,0 +1,34 @@
+# Solo configuración de herramientas; las dependencias están en requirements*.txt.
+# Tooling configuration only; dependencies live in requirements*.txt.
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["migrations"]
+
+[tool.ruff.lint]
+# D: docstrings (Google), S: seguridad, I: imports, B: bugbear.
+select = ["E", "F", "I", "B", "UP", "D", "S"]
+# Los docstrings son bilingües (es + en): D205/D415 asumen una sola frase de resumen.
+ignore = ["D205", "D415", "D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "D103"]
+"config/settings/*" = ["F405"]
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+strict = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings.test"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+addopts = "--cov=. --cov-branch --cov-report=term-missing"
+
+[tool.coverage.run]
+omit = ["tests/*", "manage.py", "config/wsgi.py", "config/asgi.py", "config/settings/dev.py"]

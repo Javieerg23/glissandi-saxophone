@@ -1,0 +1,11 @@
+-r requirements.txt
+ruff
+mypy
+django-stubs
+djangorestframework-stubs
+pytest
+pytest-django
+pytest-cov
+factory_boy
+mkdocs-material
+mkdocs-static-i18n
