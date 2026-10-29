@@ -13,3 +13,4 @@ responses
 types-requests
 django-migration-linter
 django-test-migrations
+types-yt-dlp
