@@ -43,6 +43,10 @@ jobs:
       - run: python manage.py makemigrations --check --dry-run
         env:
           DJANGO_SETTINGS_MODULE: config.settings.test
+      # compilemessages necesita msgfmt, que el runner no trae.
+      # compilemessages needs msgfmt, which the runner does not ship.
+      - run: sudo apt-get install -y --no-install-recommends gettext
+        working-directory: .
       - run: python manage.py compilemessages -v0
       - run: pytest
 
