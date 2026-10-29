@@ -61,3 +61,9 @@ disallow_untyped_calls = false
 # factory_boy factory calls do not evaluate to the model for mypy.
 module = ["tests.catalog.*"]
 disable_error_code = ["no-untyped-call", "attr-defined", "assignment", "arg-type", "comparison-overlap", "misc"]
+
+[[tool.mypy.overrides]]
+# mutagen no tiene anotaciones de tipos en sus constructores.
+# mutagen's constructors are not type-annotated.
+module = ["integrations.audio.*", "tests.integrations.audio.*"]
+disallow_untyped_calls = false
