@@ -108,6 +108,38 @@ SPECTACULAR_SETTINGS = {
 
 # --- Logs / Logging ---
 
+# Con el formateador activo el mensaje guardado en base de datos incluye la tarea.
+# With the formatter on, the message stored in the database includes the job id.
+DJANGO_DB_LOGGER_ENABLE_FORMATTER = True
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "job_id": {"()": "activity.logs.JobIdFilter"},
+        # Los filtros van en cada handler: los de un logger no afectan a los hijos.
+        # Filters sit on each handler: a logger's filters do not apply to its children.
+        "sensitive": {"()": "activity.logs.SensitiveDataFilter"},
+    },
+    "formatters": {
+        "plain": {"format": "%(asctime)s %(levelname)s [job %(job_id)s] %(name)s: %(message)s"},
+        "db": {"format": "[job %(job_id)s] %(message)s"},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "plain",
+            "filters": ["job_id", "sensitive"],
+        },
+        "db": {
+            "class": "django_db_logger.db_log_handler.DatabaseLogHandler",
+            "level": "INFO",
+            "formatter": "db",
+            "filters": ["job_id", "sensitive"],
+        },
+    },
+    "root": {"handlers": ["console", "db"], "level": "INFO"},
+}
+
 # --- Tareas / Tasks ---
 
 # --- Historial / History ---
