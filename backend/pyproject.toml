@@ -37,7 +37,36 @@ addopts = "--cov=. --cov-branch --cov-report=term-missing"
 omit = ["tests/*", "manage.py", "config/wsgi.py", "config/asgi.py", "config/settings/dev.py"]
 
 [[tool.mypy.overrides]]
-# Sin stubs ni py.typed; django-stubs los importa al cargar INSTALLED_APPS.
+# Sin stubs ni py.typed; django-stubs los importa al cargar INSTALLED_APPS (simple_history, como django_db_logger).
 # No stubs or py.typed; django-stubs imports it while loading INSTALLED_APPS.
-module = ["django_db_logger.*", "axes.*"]
+module = ["django_db_logger.*", "simple_history.*", "axes.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Sin stubs ni py.typed; sus clases base llegan como ``Any``.
+# No stubs or py.typed; its base classes arrive as ``Any``.
+module = ["simple_history.*"]
+ignore_missing_imports = true
+disallow_subclassing_any = false
+
+[[tool.mypy.overrides]]
+module = ["catalog.*"]
+disallow_subclassing_any = false
+
+[[tool.mypy.overrides]]
+# factory_boy no tipa sus declaraciones.
+# factory_boy does not type its declarations.
+module = ["catalog.factories"]
+disallow_untyped_calls = false
+
+[[tool.mypy.overrides]]
+# Las llamadas a factorías de factory_boy no devuelven el modelo para mypy.
+# factory_boy factory calls do not evaluate to the model for mypy.
+module = ["tests.catalog.*"]
+disable_error_code = ["no-untyped-call", "attr-defined", "assignment", "arg-type", "comparison-overlap", "misc"]
+
+[[tool.mypy.overrides]]
+# mutagen no tiene anotaciones de tipos en sus constructores.
+# mutagen's constructors are not type-annotated.
+module = ["integrations.audio.*", "tests.integrations.audio.*"]
+disallow_untyped_calls = false
