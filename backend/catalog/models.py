@@ -135,7 +135,7 @@ class TrackQuerySet(models.QuerySet["Track"]):
         return self.annotate(downloaded=Exists(Download.objects.filter(track=OuterRef("pk"))))
 
 
-class Track(ExternalIdModel):  # type: ignore[django-manager-missing]  # reverse of Download.track
+class Track(ExternalIdModel):
     """Canción de un álbum; el ISRC la identifica entre ediciones.
 
     Track of an album; the ISRC identifies it across editions.
