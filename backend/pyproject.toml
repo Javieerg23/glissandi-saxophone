@@ -38,3 +38,9 @@ omit = ["tests/*", "manage.py", "config/wsgi.py", "config/asgi.py", "config/sett
 # No stubs or py.typed; django-stubs imports it while loading INSTALLED_APPS.
 module = ["django_db_logger.*"]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# mutagen no tiene anotaciones de tipos en sus constructores.
+# mutagen's constructors are not type-annotated.
+module = ["integrations.audio.*", "tests.integrations.audio.*"]
+disallow_untyped_calls = false
