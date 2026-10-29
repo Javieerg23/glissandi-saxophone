@@ -2,12 +2,11 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { createI18n } from 'vue-i18n'
 
-import en from '../locales/en.json'
-import es from '../locales/es.json'
+import { messages } from '../locales'
 import HomeView from '../views/HomeView.vue'
 
 function render(locale: 'es' | 'en') {
-  const i18n = createI18n({ legacy: false, locale, messages: { es, en } })
+  const i18n = createI18n({ legacy: false, locale, messages })
   return mount(HomeView, { global: { plugins: [i18n] } })
 }
 
