@@ -1,0 +1,7 @@
+{
+  "id": "5e3b1c2d-9f8e-4a7b-6c5d-4e3f2a1b0c9d",
+  "name": "Queen Latifah",
+  "relations": [
+    {"type": "official homepage", "url": {"resource": "https://example.test/latifah"}}
+  ]
+}

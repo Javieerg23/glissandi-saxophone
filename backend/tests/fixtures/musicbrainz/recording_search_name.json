@@ -1,0 +1,15 @@
+{
+  "created": "2026-10-29T10:00:00.000Z",
+  "count": 1,
+  "offset": 0,
+  "recordings": [
+    {
+      "id": "7a2b5d8e-1c3f-4e6a-9b0d-2f4e6a8c1b3d",
+      "score": 96,
+      "title": "Bohemian Rhapsody",
+      "artist-credit": [
+        {"name": "Queen", "artist": {"id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3", "name": "Queen"}}
+      ]
+    }
+  ]
+}
