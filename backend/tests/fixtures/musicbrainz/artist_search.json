@@ -1,0 +1,9 @@
+{
+  "created": "2026-10-29T10:00:00.000Z",
+  "count": 2,
+  "offset": 0,
+  "artists": [
+    {"id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3", "score": 100, "name": "Queen", "sort-name": "Queen"},
+    {"id": "5e3b1c2d-9f8e-4a7b-6c5d-4e3f2a1b0c9d", "score": 37, "name": "Queen Latifah", "sort-name": "Latifah, Queen"}
+  ]
+}

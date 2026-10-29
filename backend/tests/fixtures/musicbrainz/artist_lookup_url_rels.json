@@ -1,0 +1,8 @@
+{
+  "id": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
+  "name": "Queen",
+  "relations": [
+    {"type": "wikidata", "url": {"resource": "https://www.wikidata.org/wiki/Q15862"}},
+    {"type": "image", "url": {"resource": "https://commons.wikimedia.org/wiki/File:Queen_band.jpg"}}
+  ]
+}
