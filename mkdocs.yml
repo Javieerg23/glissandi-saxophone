@@ -1,0 +1,14 @@
+site_name: Glissandi
+theme:
+  name: material
+plugins:
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: es
+          default: true
+          name: Español
+          build: true
+        - locale: en
+          name: English
+          build: true

@@ -1,0 +1,33 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+mutants/
+
+# Django
+*.sqlite3
+*.mo
+backend/staticfiles/
+
+# Node
+node_modules/
+dist/
+coverage/
+
+# Informes y documentación generada
+playwright-report/
+reports/
+site/
+
+# Datos locales
+downloads/
+music/
+*.log
+
+# Secretos: solo se sube .env.example
+.env
