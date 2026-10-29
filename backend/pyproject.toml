@@ -4,6 +4,9 @@
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# Las apps de Django viven en la raíz de backend/: son código propio para isort.
+# Django apps live at the backend/ root: first-party for isort.
+src = ["."]
 extend-exclude = ["migrations"]
 
 [tool.ruff.lint]
@@ -16,7 +19,7 @@ ignore = ["D205", "D415", "D203", "D213"]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101", "D103"]
+"tests/*" = ["S101", "S105", "S106", "D103"]
 "config/settings/*" = ["F405"]
 
 [tool.mypy]
@@ -36,5 +39,5 @@ omit = ["tests/*", "manage.py", "config/wsgi.py", "config/asgi.py", "config/sett
 [[tool.mypy.overrides]]
 # Sin stubs ni py.typed; django-stubs los importa al cargar INSTALLED_APPS.
 # No stubs or py.typed; django-stubs imports it while loading INSTALLED_APPS.
-module = ["django_db_logger.*"]
+module = ["django_db_logger.*", "axes.*"]
 ignore_missing_imports = true
