@@ -5,3 +5,12 @@ msgstr ""
 
 msgid "El servicio funciona."
 msgstr "The service is working."
+
+msgid "La contraseña actual no es correcta."
+msgstr "The current password is incorrect."
+
+msgid "La configuración inicial ya se hizo."
+msgstr "The initial setup has already been done."
+
+msgid "Usuario o contraseña incorrectos."
+msgstr "Incorrect username or password."
