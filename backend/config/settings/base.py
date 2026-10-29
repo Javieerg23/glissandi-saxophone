@@ -25,7 +25,17 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "drf_spectacular",
+    "django_filters",
+    "simple_history",
+    "django_db_logger",
     "core",
+    "accounts",
+    "catalog",
+    "jobs",
+    "watches",
+    "proxies",
+    "activity",
+    "preferences",
 ]
 
 MIDDLEWARE = [
@@ -90,3 +100,14 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+
+# Cada bloque lo edita un único módulo; así los cambios en paralelo no chocan.
+# Each block is edited by a single module so parallel changes do not collide.
+
+# --- Seguridad y cuentas / Security and accounts ---
+
+# --- Logs / Logging ---
+
+# --- Tareas / Tasks ---
+
+# --- Historial / History ---
