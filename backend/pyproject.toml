@@ -32,3 +32,9 @@ addopts = "--cov=. --cov-branch --cov-report=term-missing"
 
 [tool.coverage.run]
 omit = ["tests/*", "manage.py", "config/wsgi.py", "config/asgi.py", "config/settings/dev.py"]
+
+[[tool.mypy.overrides]]
+# Sin stubs ni py.typed; django-stubs los importa al cargar INSTALLED_APPS.
+# No stubs or py.typed; django-stubs imports it while loading INSTALLED_APPS.
+module = ["django_db_logger.*"]
+ignore_missing_imports = true

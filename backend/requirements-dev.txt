@@ -9,3 +9,7 @@ pytest-cov
 factory_boy
 mkdocs-material
 mkdocs-static-i18n
+responses
+types-requests
+django-migration-linter
+django-test-migrations

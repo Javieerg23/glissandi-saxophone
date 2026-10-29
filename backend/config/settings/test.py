@@ -9,3 +9,7 @@ from .base import *  # noqa: E402, F403
 # Hashing rápido: la seguridad de las contraseñas no es lo que se prueba aquí.
 # Fast hashing: password strength is not what these tests exercise.
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+# App con modelos de prueba (p. ej. para ``AppendOnlyModel``); sin migraciones.
+# App hosting test models (e.g. for ``AppendOnlyModel``); it has no migrations.
+INSTALLED_APPS = [*INSTALLED_APPS, "tests.testapp"]  # noqa: F405
