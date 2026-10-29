@@ -1,0 +1,18 @@
+{
+  "ui": {
+    "close": "Cerrar",
+    "list": { "empty": "No hay nada que mostrar." }
+  },
+  "nav": {
+    "main": "Navegación principal",
+    "home": "Inicio"
+  },
+  "errors": {
+    "network": "No se pudo conectar con el servidor.",
+    "unauthorized": "Tu sesión ha caducado. Inicia sesión de nuevo.",
+    "forbidden": "No tienes permiso para hacer esto.",
+    "notFound": "No se ha encontrado lo que buscabas.",
+    "server": "El servidor ha fallado. Inténtalo más tarde.",
+    "unknown": "Ha ocurrido un error inesperado."
+  }
+}
