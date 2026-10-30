@@ -128,14 +128,404 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/catalog/albums/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Álbumes del catálogo. / Catalogue albums. */
+        get: operations["v1_catalog_albums_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/albums/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Álbumes del catálogo. / Catalogue albums. */
+        get: operations["v1_catalog_albums_retrieve"];
+        /** @description Álbumes del catálogo. / Catalogue albums. */
+        put: operations["v1_catalog_albums_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Álbumes del catálogo. / Catalogue albums. */
+        patch: operations["v1_catalog_albums_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/catalog/albums/{id}/artists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** @description Reemplaza los artistas, en el orden recibido. / Replaces the artists in order. */
+        put: operations["v1_catalog_albums_artists_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/albums/{id}/history/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Versiones del elemento, la más reciente primero. / Item versions, newest first. */
+        get: operations["v1_catalog_albums_history_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/albums/{id}/revert/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Devuelve los campos editables a los de una versión. / Restores a version. */
+        post: operations["v1_catalog_albums_revert_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/artists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Artistas del catálogo. / Catalogue artists. */
+        get: operations["v1_catalog_artists_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/artists/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Artistas del catálogo. / Catalogue artists. */
+        get: operations["v1_catalog_artists_retrieve"];
+        /** @description Artistas del catálogo. / Catalogue artists. */
+        put: operations["v1_catalog_artists_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Artistas del catálogo. / Catalogue artists. */
+        patch: operations["v1_catalog_artists_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/catalog/artists/{id}/history/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Versiones del elemento, la más reciente primero. / Item versions, newest first. */
+        get: operations["v1_catalog_artists_history_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/artists/{id}/revert/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Devuelve los campos editables a los de una versión. / Restores a version. */
+        post: operations["v1_catalog_artists_revert_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/blocked/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Lista de bloqueados: bloquear es crear y desbloquear es borrar.
+         *
+         *     Blocked list: blocking is creating and unblocking is deleting.
+         */
+        get: operations["v1_catalog_blocked_list"];
+        put?: never;
+        /**
+         * @description Lista de bloqueados: bloquear es crear y desbloquear es borrar.
+         *
+         *     Blocked list: blocking is creating and unblocking is deleting.
+         */
+        post: operations["v1_catalog_blocked_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/blocked/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * @description Lista de bloqueados: bloquear es crear y desbloquear es borrar.
+         *
+         *     Blocked list: blocking is creating and unblocking is deleting.
+         */
+        delete: operations["v1_catalog_blocked_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/deezer/artists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Resultados con marca de los que ya están o están bloqueados. / Annotated results. */
+        get: operations["v1_catalog_deezer_artists_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Canciones del catálogo. / Catalogue tracks. */
+        get: operations["v1_catalog_tracks_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Canciones del catálogo. / Catalogue tracks. */
+        get: operations["v1_catalog_tracks_retrieve"];
+        /** @description Canciones del catálogo. / Catalogue tracks. */
+        put: operations["v1_catalog_tracks_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Canciones del catálogo. / Catalogue tracks. */
+        patch: operations["v1_catalog_tracks_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/{id}/artists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** @description Reemplaza los artistas, en el orden recibido. / Replaces the artists in order. */
+        put: operations["v1_catalog_tracks_artists_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/{id}/history/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Versiones del elemento, la más reciente primero. / Item versions, newest first. */
+        get: operations["v1_catalog_tracks_history_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/{id}/revert/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Devuelve los campos editables a los de una versión. / Restores a version. */
+        post: operations["v1_catalog_tracks_revert_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Álbum con sus artistas; título, fecha y portada son editables. / Album with artists. */
+        Album: {
+            readonly id: number;
+            title: string;
+            /** Format: date */
+            release_date?: string | null;
+            cover_url?: string;
+            readonly artists: components["schemas"]["Credit"][];
+            readonly deezer_id: number | null;
+            /** Format: uuid */
+            readonly musicbrainz_id: string | null;
+        };
+        /** @description Álbum con sus artistas; título, fecha y portada son editables. / Album with artists. */
+        AlbumRequest: {
+            title: string;
+            /** Format: date */
+            release_date?: string | null;
+            cover_url?: string;
+        };
+        /** @description Artista; nombre e imagen son editables. / Artist; name and image are editable. */
+        Artist: {
+            readonly id: number;
+            name: string;
+            image_url?: string;
+            readonly deezer_id: number | null;
+            /** Format: uuid */
+            readonly musicbrainz_id: string | null;
+        };
+        /** @description Lista ordenada de artistas; el primero es el principal. / Ordered artist list. */
+        ArtistIdsRequest: {
+            artists: number[];
+        };
+        /** @description Artista; nombre e imagen son editables. / Artist; name and image are editable. */
+        ArtistRequest: {
+            name: string;
+            image_url?: string;
+        };
+        /** @description Elemento bloqueado; un bloqueo por tipo e identificador. / Blocked item. */
+        BlockedItem: {
+            readonly id: number;
+            kind: components["schemas"]["KindEnum"];
+            /** Format: int64 */
+            deezer_id: number;
+            name?: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /** @description Elemento bloqueado; un bloqueo por tipo e identificador. / Blocked item. */
+        BlockedItemRequest: {
+            kind: components["schemas"]["KindEnum"];
+            /** Format: int64 */
+            deezer_id: number;
+            name?: string;
+        };
         /** @description Usuario y contraseña de entrada. / Username and password input. */
         CredentialsRequest: {
             username: string;
             password: string;
+        };
+        /** @description Artista de un crédito, en orden. / Artist of a credit, in order. */
+        Credit: {
+            id: number;
+            name: string;
+            position: number;
+        };
+        /** @description Artista de un crédito, en orden. / Artist of a credit, in order. */
+        CreditRequest: {
+            id: number;
+            name: string;
+            position: number;
+        };
+        /** @description Artista encontrado en Deezer. / Artist found on Deezer. */
+        DeezerArtist: {
+            deezer_id: number;
+            name: string;
+            image_url: string | null;
+            album_count: number | null;
+            fan_count: number | null;
+            in_catalog: boolean;
+            blocked: boolean;
+        };
+        /** @description Página de resultados de Deezer. / Page of Deezer results. */
+        DeezerSearch: {
+            results: components["schemas"]["DeezerArtist"][];
+            total: number;
+            next_index: number | null;
         };
         /** @description Cuerpo de error con un mensaje legible. / Error body with a readable message. */
         Detail: {
@@ -146,6 +536,26 @@ export interface components {
             status: string;
             message: string;
         };
+        /** @description Versión anterior de un elemento. / Past version of an item. */
+        HistoryEntry: {
+            history_id: number;
+            /** Format: date-time */
+            history_date: string;
+            /** @description + creado, ~ modificado, - borrado. */
+            history_type: string;
+            history_user: string | null;
+            /** @description Valores de los campos editables. */
+            changes: {
+                [key: string]: unknown;
+            };
+        };
+        /**
+         * @description * `artist` - Artista
+         *     * `album` - Álbum
+         *     * `track` - Canción
+         * @enum {string}
+         */
+        KindEnum: "artist" | "album" | "track";
         /**
          * @description Alta de la primera cuenta; valida usuario y contraseña con las reglas de Django.
          *
@@ -155,15 +565,114 @@ export interface components {
             username: string;
             password: string;
         };
+        PaginatedAlbumList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Album"][];
+        };
+        PaginatedArtistList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Artist"][];
+        };
+        PaginatedBlockedItemList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["BlockedItem"][];
+        };
+        PaginatedHistoryEntryList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["HistoryEntry"][];
+        };
+        PaginatedTrackList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Track"][];
+        };
         /** @description Cambio de contraseña. / Password change. */
         PasswordChangeRequest: {
             current_password: string;
             new_password: string;
         };
+        /** @description Álbum con sus artistas; título, fecha y portada son editables. / Album with artists. */
+        PatchedAlbumRequest: {
+            title?: string;
+            /** Format: date */
+            release_date?: string | null;
+            cover_url?: string;
+        };
+        /** @description Artista; nombre e imagen son editables. / Artist; name and image are editable. */
+        PatchedArtistRequest: {
+            name?: string;
+            image_url?: string;
+        };
+        /** @description Canción con sus artistas; título y numeración son editables. / Track with artists. */
+        PatchedTrackRequest: {
+            title?: string;
+            /** Format: int64 */
+            track_number?: number;
+            /** Format: int64 */
+            disc_number?: number;
+        };
         /** @description Usuario con sesión y su rol. / Signed-in user and role. */
         Profile: {
             username: string;
             role: components["schemas"]["RoleEnum"];
+        };
+        /** @description Versión a la que volver. / Version to go back to. */
+        RevertRequest: {
+            history_id: number;
         };
         /**
          * @description * `administrador` - administrador
@@ -174,6 +683,32 @@ export interface components {
         /** @description Si falta crear el primer administrador. / Whether the first admin is still missing. */
         SetupStatus: {
             needed: boolean;
+        };
+        /** @description Canción con sus artistas; título y numeración son editables. / Track with artists. */
+        Track: {
+            readonly id: number;
+            readonly album: number;
+            title: string;
+            /** Format: int64 */
+            track_number?: number;
+            /** Format: int64 */
+            disc_number?: number;
+            /** @description Segundos. */
+            readonly duration: number | null;
+            readonly isrc: string | null;
+            readonly artists: components["schemas"]["Credit"][];
+            readonly downloaded: boolean;
+            readonly deezer_id: number | null;
+            /** Format: uuid */
+            readonly musicbrainz_id: string | null;
+        };
+        /** @description Canción con sus artistas; título y numeración son editables. / Track with artists. */
+        TrackRequest: {
+            title: string;
+            /** Format: int64 */
+            track_number?: number;
+            /** Format: int64 */
+            disc_number?: number;
         };
         /** @description Cambio de nombre de usuario. / Username change. */
         UsernameChangeRequest: {
@@ -375,6 +910,696 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_list: {
+        parameters: {
+            query?: {
+                artist?: number;
+                deezer_id?: number;
+                musicbrainz_id?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                released_after?: string;
+                released_before?: string;
+                /** @description Un término de búsqueda. */
+                search?: string;
+                title__icontains?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAlbumList"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AlbumRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AlbumRequest"];
+                "multipart/form-data": components["schemas"]["AlbumRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAlbumRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAlbumRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAlbumRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_artists_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArtistIdsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ArtistIdsRequest"];
+                "multipart/form-data": components["schemas"]["ArtistIdsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_history_list: {
+        parameters: {
+            query?: {
+                artist?: number;
+                deezer_id?: number;
+                musicbrainz_id?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                released_after?: string;
+                released_before?: string;
+                /** @description Un término de búsqueda. */
+                search?: string;
+                title__icontains?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedHistoryEntryList"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_revert_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RevertRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RevertRequest"];
+                "multipart/form-data": components["schemas"]["RevertRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_list: {
+        parameters: {
+            query?: {
+                deezer_id?: number;
+                musicbrainz_id?: string;
+                name__icontains?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedArtistList"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Artist"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArtistRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ArtistRequest"];
+                "multipart/form-data": components["schemas"]["ArtistRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Artist"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedArtistRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedArtistRequest"];
+                "multipart/form-data": components["schemas"]["PatchedArtistRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Artist"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_history_list: {
+        parameters: {
+            query?: {
+                deezer_id?: number;
+                musicbrainz_id?: string;
+                name__icontains?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedHistoryEntryList"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_revert_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RevertRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RevertRequest"];
+                "multipart/form-data": components["schemas"]["RevertRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Artist"];
+                };
+            };
+        };
+    };
+    v1_catalog_blocked_list: {
+        parameters: {
+            query?: {
+                deezer_id?: number;
+                /**
+                 * @description * `artist` - Artista
+                 *     * `album` - Álbum
+                 *     * `track` - Canción
+                 */
+                kind?: "album" | "artist" | "track";
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedBlockedItemList"];
+                };
+            };
+        };
+    };
+    v1_catalog_blocked_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlockedItemRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["BlockedItemRequest"];
+                "multipart/form-data": components["schemas"]["BlockedItemRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockedItem"];
+                };
+            };
+        };
+    };
+    v1_catalog_blocked_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este blocked item. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    v1_catalog_deezer_artists_retrieve: {
+        parameters: {
+            query: {
+                index?: number;
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeezerSearch"];
+                };
+            };
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_list: {
+        parameters: {
+            query?: {
+                album?: number;
+                artist?: number;
+                deezer_id?: number;
+                downloaded?: boolean;
+                isrc?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+                title__icontains?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTrackList"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TrackRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TrackRequest"];
+                "multipart/form-data": components["schemas"]["TrackRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedTrackRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedTrackRequest"];
+                "multipart/form-data": components["schemas"]["PatchedTrackRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_artists_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArtistIdsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ArtistIdsRequest"];
+                "multipart/form-data": components["schemas"]["ArtistIdsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_history_list: {
+        parameters: {
+            query?: {
+                album?: number;
+                artist?: number;
+                deezer_id?: number;
+                downloaded?: boolean;
+                isrc?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+                title__icontains?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedHistoryEntryList"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_revert_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RevertRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RevertRequest"];
+                "multipart/form-data": components["schemas"]["RevertRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
                 };
             };
         };

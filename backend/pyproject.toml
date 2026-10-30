@@ -39,7 +39,7 @@ omit = ["tests/*", "manage.py", "config/wsgi.py", "config/asgi.py", "config/sett
 [[tool.mypy.overrides]]
 # Sin stubs ni py.typed; django-stubs los importa al cargar INSTALLED_APPS (simple_history, como django_db_logger).
 # No stubs or py.typed; django-stubs imports it while loading INSTALLED_APPS.
-module = ["django_db_logger.*", "simple_history.*", "axes.*"]
+module = ["django_db_logger.*", "simple_history.*", "axes.*", "django_filters.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
