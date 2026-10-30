@@ -3059,7 +3059,13 @@ components:
           format: int64
     PatchedWatchRequest:
       type: object
-      description: Vigilancia de novedades. / New-release watch.
+      description: |-
+        Vigilancia de novedades con sus artistas en orden. / New-release watch with ordered artists.
+
+        Los artistas se leen en ``artists`` (id, nombre y posición) y se escriben como lista
+        ordenada de ids en ``artist_ids``; sin ``artist_ids`` se dejan como estaban.
+        Artists are read from ``artists`` and written as an ordered id list in ``artist_ids``;
+        leaving ``artist_ids`` out keeps them unchanged.
       properties:
         name:
           type: string
@@ -3069,6 +3075,20 @@ components:
         enabled:
           type: boolean
           title: Activa
+        interval_hours:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+          title: Intervalo (horas)
+        auto_download:
+          type: boolean
+          title: Descarga automática
+        artist_ids:
+          type: array
+          items:
+            type: integer
+          writeOnly: true
     Preference:
       type: object
       description: Ajuste con valor efectivo y por defecto. / Setting with effective
@@ -3358,7 +3378,13 @@ components:
       - username
     Watch:
       type: object
-      description: Vigilancia de novedades. / New-release watch.
+      description: |-
+        Vigilancia de novedades con sus artistas en orden. / New-release watch with ordered artists.
+
+        Los artistas se leen en ``artists`` (id, nombre y posición) y se escriben como lista
+        ordenada de ids en ``artist_ids``; sin ``artist_ids`` se dejan como estaban.
+        Artists are read from ``artists`` and written as an ordered id list in ``artist_ids``;
+        leaving ``artist_ids`` out keeps them unchanged.
       properties:
         id:
           type: integer
@@ -3370,6 +3396,20 @@ components:
         enabled:
           type: boolean
           title: Activa
+        interval_hours:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+          title: Intervalo (horas)
+        auto_download:
+          type: boolean
+          title: Descarga automática
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/Credit'
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -3381,13 +3421,20 @@ components:
           readOnly: true
           title: Actualizada
       required:
+      - artists
       - created_at
       - id
       - name
       - updated_at
     WatchRequest:
       type: object
-      description: Vigilancia de novedades. / New-release watch.
+      description: |-
+        Vigilancia de novedades con sus artistas en orden. / New-release watch with ordered artists.
+
+        Los artistas se leen en ``artists`` (id, nombre y posición) y se escriben como lista
+        ordenada de ids en ``artist_ids``; sin ``artist_ids`` se dejan como estaban.
+        Artists are read from ``artists`` and written as an ordered id list in ``artist_ids``;
+        leaving ``artist_ids`` out keeps them unchanged.
       properties:
         name:
           type: string
@@ -3397,6 +3444,20 @@ components:
         enabled:
           type: boolean
           title: Activa
+        interval_hours:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 1
+          format: int64
+          title: Intervalo (horas)
+        auto_download:
+          type: boolean
+          title: Descarga automática
+        artist_ids:
+          type: array
+          items:
+            type: integer
+          writeOnly: true
       required:
       - name
     WatchRun:

@@ -1298,12 +1298,27 @@ export interface components {
             /** Format: int64 */
             disc_number?: number;
         };
-        /** @description Vigilancia de novedades. / New-release watch. */
+        /**
+         * @description Vigilancia de novedades con sus artistas en orden. / New-release watch with ordered artists.
+         *
+         *     Los artistas se leen en ``artists`` (id, nombre y posición) y se escriben como lista
+         *     ordenada de ids en ``artist_ids``; sin ``artist_ids`` se dejan como estaban.
+         *     Artists are read from ``artists`` and written as an ordered id list in ``artist_ids``;
+         *     leaving ``artist_ids`` out keeps them unchanged.
+         */
         PatchedWatchRequest: {
             /** Nombre */
             name?: string;
             /** Activa */
             enabled?: boolean;
+            /**
+             * Intervalo (horas)
+             * Format: int64
+             */
+            interval_hours?: number;
+            /** Descarga automática */
+            auto_download?: boolean;
+            artist_ids?: number[];
         };
         /** @description Ajuste con valor efectivo y por defecto. / Setting with effective and default value. */
         Preference: {
@@ -1437,13 +1452,28 @@ export interface components {
             current_password: string;
             username: string;
         };
-        /** @description Vigilancia de novedades. / New-release watch. */
+        /**
+         * @description Vigilancia de novedades con sus artistas en orden. / New-release watch with ordered artists.
+         *
+         *     Los artistas se leen en ``artists`` (id, nombre y posición) y se escriben como lista
+         *     ordenada de ids en ``artist_ids``; sin ``artist_ids`` se dejan como estaban.
+         *     Artists are read from ``artists`` and written as an ordered id list in ``artist_ids``;
+         *     leaving ``artist_ids`` out keeps them unchanged.
+         */
         Watch: {
             readonly id: number;
             /** Nombre */
             name: string;
             /** Activa */
             enabled?: boolean;
+            /**
+             * Intervalo (horas)
+             * Format: int64
+             */
+            interval_hours?: number;
+            /** Descarga automática */
+            auto_download?: boolean;
+            readonly artists: components["schemas"]["Credit"][];
             /**
              * Creada
              * Format: date-time
@@ -1455,12 +1485,27 @@ export interface components {
              */
             readonly updated_at: string;
         };
-        /** @description Vigilancia de novedades. / New-release watch. */
+        /**
+         * @description Vigilancia de novedades con sus artistas en orden. / New-release watch with ordered artists.
+         *
+         *     Los artistas se leen en ``artists`` (id, nombre y posición) y se escriben como lista
+         *     ordenada de ids en ``artist_ids``; sin ``artist_ids`` se dejan como estaban.
+         *     Artists are read from ``artists`` and written as an ordered id list in ``artist_ids``;
+         *     leaving ``artist_ids`` out keeps them unchanged.
+         */
         WatchRequest: {
             /** Nombre */
             name: string;
             /** Activa */
             enabled?: boolean;
+            /**
+             * Intervalo (horas)
+             * Format: int64
+             */
+            interval_hours?: number;
+            /** Descarga automática */
+            auto_download?: boolean;
+            artist_ids?: number[];
         };
         /** @description Resultado de una comprobación, solo lectura. / One check result, read-only. */
         WatchRun: {

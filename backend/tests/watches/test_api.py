@@ -8,7 +8,8 @@ from django.utils import timezone
 from rest_framework.test import APIClient
 
 from activity.models import ActivityLog
-from watches.models import Watch, WatchRun
+from catalog.models import Artist
+from watches.models import Watch, WatchArtist, WatchRun
 
 pytestmark = pytest.mark.django_db
 
@@ -90,3 +91,53 @@ def test_runs_are_listed_newest_first(client_logged: APIClient, watch: Watch) ->
 
 def test_runs_of_unknown_watch_is_404(client_logged: APIClient) -> None:
     assert client_logged.get(f"{URL}999/runs/").status_code == 404
+
+
+def test_creates_with_ordered_artists_and_settings(client_logged: APIClient) -> None:
+    second, first = Artist.objects.create(name="B"), Artist.objects.create(name="A")
+    body = {
+        "name": "Novedades",
+        "artist_ids": [first.pk, second.pk],
+        "interval_hours": 6,
+        "auto_download": True,
+    }
+    data = client_logged.post(URL, body, format="json").json()
+    assert [(a["id"], a["name"]) for a in data["artists"]] == [(first.pk, "A"), (second.pk, "B")]
+    assert (data["interval_hours"], data["auto_download"]) == (6, True)
+    assert "artist_ids" not in data
+
+
+def test_replaces_artists_in_new_order(client_logged: APIClient, watch: Watch) -> None:
+    a, b = Artist.objects.create(name="A"), Artist.objects.create(name="B")
+    client_logged.patch(f"{URL}{watch.pk}/", {"artist_ids": [a.pk, b.pk]}, format="json")
+    response = client_logged.patch(f"{URL}{watch.pk}/", {"artist_ids": [b.pk]}, format="json")
+    assert [x["name"] for x in response.json()["artists"]] == ["B"]
+
+
+def test_patch_without_artist_ids_keeps_artists(client_logged: APIClient, watch: Watch) -> None:
+    artist = Artist.objects.create(name="A")
+    WatchArtist.objects.create(watch=watch, artist=artist)
+    response = client_logged.patch(f"{URL}{watch.pk}/", {"enabled": False}, format="json")
+    assert [x["id"] for x in response.json()["artists"]] == [artist.pk]
+
+
+@pytest.mark.parametrize(
+    ("body", "field"),
+    [
+        ({"artist_ids": [999]}, "artist_ids"),
+        ({"interval_hours": 0}, "interval_hours"),
+    ],
+)
+def test_rejects_invalid_fields(
+    client_logged: APIClient, body: dict[str, object], field: str
+) -> None:
+    response = client_logged.post(URL, {"name": "N", **body}, format="json")
+    assert response.status_code == 400
+    assert list(response.json()) == [field]
+
+
+def test_rejects_repeated_artists(client_logged: APIClient) -> None:
+    artist = Artist.objects.create(name="A")
+    body = {"name": "N", "artist_ids": [artist.pk, artist.pk]}
+    response = client_logged.post(URL, body, format="json")
+    assert list(response.json()) == ["artist_ids"]
