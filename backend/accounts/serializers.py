@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
+from .roles import ADMIN_GROUP, USER_GROUP
+
 
 class CredentialsSerializer(serializers.Serializer[Any]):
     """Usuario y contraseña de entrada. / Username and password input."""
@@ -70,3 +72,16 @@ class UsernameChangeSerializer(_CurrentPasswordSerializer):
         user.username = value
         user.full_clean(exclude=["password"])
         return value
+
+
+class ProfileSerializer(serializers.Serializer[Any]):
+    """Usuario con sesión y su rol. / Signed-in user and role."""
+
+    username = serializers.CharField()
+    role = serializers.ChoiceField(choices=[ADMIN_GROUP, USER_GROUP])
+
+
+class SetupStatusSerializer(serializers.Serializer[Any]):
+    """Si falta crear el primer administrador. / Whether the first admin is still missing."""
+
+    needed = serializers.BooleanField()

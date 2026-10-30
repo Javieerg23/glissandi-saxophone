@@ -2,13 +2,10 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 import { ApiError, api } from '../api/client'
+import type { components } from '../api/schema'
 
-/** Usuario de la sesión tal y como lo devuelve «quién soy». */
-export interface User {
-  id: number
-  username: string
-  role: 'administrator' | 'user'
-}
+/** Usuario de la sesión tal y como lo devuelve «quién soy» (tipo generado del esquema OpenAPI). */
+export type User = components['schemas']['Profile']
 
 /**
  * Sesión del usuario. `loaded` distingue «aún no sé si hay sesión» de «no hay sesión»,

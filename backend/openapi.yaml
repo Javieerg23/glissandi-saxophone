@@ -1,0 +1,301 @@
+openapi: 3.0.3
+info:
+  title: Glissandi API
+  version: 0.1.0
+paths:
+  /api/health/:
+    get:
+      operationId: health_retrieve
+      description: |-
+        Indica que el servicio responde; lo usan el front y los despliegues.
+
+        Reports that the service is up; used by the frontend and deployments.
+      tags:
+      - core
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+          description: ''
+  /api/v1/accounts/login/:
+    post:
+      operationId: v1_accounts_login_create
+      description: Abre la sesión con usuario y contraseña. / Opens a session.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredentialsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CredentialsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CredentialsRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+  /api/v1/accounts/logout/:
+    post:
+      operationId: v1_accounts_logout_create
+      description: Cierra la sesión. / Closes the session.
+      tags:
+      - accounts
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/accounts/me/:
+    get:
+      operationId: v1_accounts_me_retrieve
+      description: Devuelve usuario y rol. / Returns username and role.
+      tags:
+      - accounts
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+  /api/v1/accounts/password/:
+    post:
+      operationId: v1_accounts_password_create
+      description: Cambia la contraseña y conserva la sesión actual. / Changes the
+        password.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordChangeRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/accounts/setup/:
+    get:
+      operationId: v1_accounts_setup_retrieve
+      description: Indica si falta configurar y entrega la cookie CSRF. / Reports
+        setup status.
+      tags:
+      - accounts
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetupStatus'
+          description: ''
+    post:
+      operationId: v1_accounts_setup_create
+      description: Crea el primer administrador y abre su sesión. / Creates the first
+        admin.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewAccountRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewAccountRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NewAccountRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+  /api/v1/accounts/username/:
+    post:
+      operationId: v1_accounts_username_create
+      description: Renombra al usuario. / Renames the user.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsernameChangeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UsernameChangeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UsernameChangeRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+components:
+  schemas:
+    CredentialsRequest:
+      type: object
+      description: Usuario y contraseña de entrada. / Username and password input.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    Detail:
+      type: object
+      description: Cuerpo de error con un mensaje legible. / Error body with a readable
+        message.
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    Health:
+      type: object
+      description: Respuesta del endpoint de estado. / Health endpoint response.
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+      required:
+      - message
+      - status
+    NewAccountRequest:
+      type: object
+      description: |-
+        Alta de la primera cuenta; valida usuario y contraseña con las reglas de Django.
+
+        First account creation, validated with Django's own rules.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    PasswordChangeRequest:
+      type: object
+      description: Cambio de contraseña. / Password change.
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - current_password
+      - new_password
+    Profile:
+      type: object
+      description: Usuario con sesión y su rol. / Signed-in user and role.
+      properties:
+        username:
+          type: string
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - role
+      - username
+    RoleEnum:
+      enum:
+      - administrador
+      - usuario
+      type: string
+      description: |-
+        * `administrador` - administrador
+        * `usuario` - usuario
+    SetupStatus:
+      type: object
+      description: Si falta crear el primer administrador. / Whether the first admin
+        is still missing.
+      properties:
+        needed:
+          type: boolean
+      required:
+      - needed
+    UsernameChangeRequest:
+      type: object
+      description: Cambio de nombre de usuario. / Username change.
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        username:
+          type: string
+          minLength: 1
+          maxLength: 150
+      required:
+      - current_password
+      - username
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
