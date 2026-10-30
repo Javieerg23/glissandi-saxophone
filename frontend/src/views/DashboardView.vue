@@ -46,14 +46,18 @@ function kindLabel(kind: string): string {
   return te(`dashboard.jobs.kind.${kind}`) ? t(`dashboard.jobs.kind.${kind}`) : kind
 }
 
-onMounted(async () => {
-  timer = setInterval(() => void refreshJobs(), POLL_MS)
+async function loadSummary(): Promise<void> {
   try {
     summary.value = await api<LibrarySummary>('/api/v1/catalog/summary/')
   } catch (e) {
     summaryError.value = errorText(e, t)
   }
-  await refreshJobs()
+}
+
+onMounted(() => {
+  timer = setInterval(() => void refreshJobs(), POLL_MS)
+  // En paralelo: un resumen lento no debe retrasar las tareas en curso.
+  void Promise.all([loadSummary(), refreshJobs()])
 })
 onUnmounted(() => clearInterval(timer))
 </script>
