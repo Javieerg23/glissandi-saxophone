@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
-from .roles import ADMIN_GROUP, USER_GROUP
+from .roles import ADMIN_GROUP, USER_GROUP, role_of
 
 
 class CredentialsSerializer(serializers.Serializer[Any]):
@@ -81,7 +81,53 @@ class ProfileSerializer(serializers.Serializer[Any]):
     role = serializers.ChoiceField(choices=[ADMIN_GROUP, USER_GROUP])
 
 
+class MeSerializer(ProfileSerializer):
+    """Perfil con los intentos fallidos desde el último inicio de sesión.
+
+    Profile with the failed attempts since the last successful sign-in.
+    """
+
+    failed_attempts = serializers.IntegerField()
+
+
 class SetupStatusSerializer(serializers.Serializer[Any]):
     """Si falta crear el primer administrador. / Whether the first admin is still missing."""
 
     needed = serializers.BooleanField()
+
+
+class ManagedUserSerializer(serializers.ModelSerializer[User]):
+    """Usuario tal como lo gestiona un administrador. / User as an administrator manages it."""
+
+    role = serializers.SerializerMethodField()
+
+    class Meta:
+        """Solo los campos de gestión. / Management fields only."""
+
+        model = User
+        fields = ["id", "username", "role", "is_active", "last_login", "date_joined"]
+        read_only_fields = ["id", "last_login", "date_joined"]
+
+    def get_role(self, obj: User) -> str:
+        """Devuelve el rol del usuario. / Returns the user's role."""
+        return role_of(obj)
+
+
+class ManagedUserCreateSerializer(NewAccountSerializer):
+    """Alta de un usuario con rol por un administrador. / Administrator-made account with a role."""
+
+    role = serializers.ChoiceField(choices=[ADMIN_GROUP, USER_GROUP], default=USER_GROUP)
+
+    def validate_username(self, value: str) -> str:
+        """Aplica las reglas del modelo y que no exista ya. / Applies model rules and uniqueness."""
+        value = super().validate_username(value)
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError(_("Ese nombre de usuario ya existe."))
+        return value
+
+
+class ManagedUserUpdateSerializer(serializers.Serializer[Any]):
+    """Cambios parciales: rol y activo. / Partial changes: role and active flag."""
+
+    role = serializers.ChoiceField(choices=[ADMIN_GROUP, USER_GROUP], required=False)
+    is_active = serializers.BooleanField(required=False)
