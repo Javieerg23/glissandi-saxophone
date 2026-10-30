@@ -128,6 +128,164 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/preferences/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Lista todos los ajustes con su valor y su valor por defecto.
+         *
+         *     Lists every setting with its value and its default.
+         */
+        get: operations["v1_preferences_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/preferences/{key}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Devuelve un ajuste. / Returns one setting. */
+        get: operations["v1_preferences_retrieve"];
+        /** @description Cambia el valor de un ajuste y lo registra. / Changes a setting and logs it. */
+        put: operations["v1_preferences_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/proxies/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        get: operations["v1_proxies_list"];
+        put?: never;
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        post: operations["v1_proxies_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/proxies/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        get: operations["v1_proxies_retrieve"];
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        put: operations["v1_proxies_update"];
+        post?: never;
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        delete: operations["v1_proxies_destroy"];
+        options?: never;
+        head?: never;
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        patch: operations["v1_proxies_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/proxies/{id}/check/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Comprueba que el proxy da salida al tráfico. / Checks that the proxy relays traffic.
+         *
+         *     Un código 2xx o 3xx cuenta como correcto.
+         *     A 2xx or 3xx status counts as success.
+         */
+        post: operations["v1_proxies_check_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/watches/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        get: operations["v1_watches_list"];
+        put?: never;
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        post: operations["v1_watches_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/watches/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        get: operations["v1_watches_retrieve"];
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        put: operations["v1_watches_update"];
+        post?: never;
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        delete: operations["v1_watches_destroy"];
+        options?: never;
+        head?: never;
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        patch: operations["v1_watches_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/watches/{id}/runs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Historial de comprobaciones, de la más reciente a la más antigua.
+         *
+         *     Check history, newest first.
+         */
+        get: operations["v1_watches_runs_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -155,15 +313,124 @@ export interface components {
             username: string;
             password: string;
         };
+        PaginatedWatchList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Watch"][];
+        };
+        PaginatedWatchRunList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["WatchRun"][];
+        };
         /** @description Cambio de contraseña. / Password change. */
         PasswordChangeRequest: {
             current_password: string;
             new_password: string;
         };
+        /**
+         * @description Proxy saliente. Los contadores los actualiza la descarga, no la API.
+         *
+         *     Outbound proxy. The counters are maintained by downloads, not by the API.
+         */
+        PatchedProxyRequest: {
+            url?: string;
+            /** Activo */
+            enabled?: boolean;
+        };
+        /** @description Vigilancia de novedades. / New-release watch. */
+        PatchedWatchRequest: {
+            /** Nombre */
+            name?: string;
+            /** Activa */
+            enabled?: boolean;
+        };
+        /** @description Ajuste con valor efectivo y por defecto. / Setting with effective and default value. */
+        Preference: {
+            readonly key: string;
+            readonly value: unknown;
+            readonly default: unknown;
+        };
+        /**
+         * @description Valor nuevo de un ajuste. / New value for a setting.
+         *
+         *     Solo se admite el mismo tipo que el valor por defecto: así un ajuste no
+         *     cambia de forma y el código que lo lee no tiene que defenderse de ello.
+         *     Only the default's type is accepted, so a setting never changes shape and
+         *     its readers need no defensive parsing.
+         */
+        PreferenceWriteRequest: {
+            value: unknown;
+        };
         /** @description Usuario con sesión y su rol. / Signed-in user and role. */
         Profile: {
             username: string;
             role: components["schemas"]["RoleEnum"];
+        };
+        /**
+         * @description Proxy saliente. Los contadores los actualiza la descarga, no la API.
+         *
+         *     Outbound proxy. The counters are maintained by downloads, not by the API.
+         */
+        Proxy: {
+            readonly id: number;
+            url: string;
+            /** Activo */
+            enabled?: boolean;
+            /** Éxitos */
+            readonly success_count: number;
+            /** Fallos */
+            readonly failure_count: number;
+            /**
+             * Último uso
+             * Format: date-time
+             */
+            readonly last_used_at: string | null;
+            /**
+             * Último fallo
+             * Format: date-time
+             */
+            readonly last_failed_at: string | null;
+            /**
+             * Creado
+             * Format: date-time
+             */
+            readonly created_at: string;
+        };
+        /** @description Resultado de probar un proxy. / Result of testing a proxy. */
+        ProxyCheck: {
+            ok: boolean;
+            status_code: number | null;
+        };
+        /**
+         * @description Proxy saliente. Los contadores los actualiza la descarga, no la API.
+         *
+         *     Outbound proxy. The counters are maintained by downloads, not by the API.
+         */
+        ProxyRequest: {
+            url: string;
+            /** Activo */
+            enabled?: boolean;
         };
         /**
          * @description * `administrador` - administrador
@@ -175,10 +442,63 @@ export interface components {
         SetupStatus: {
             needed: boolean;
         };
+        /**
+         * @description * `succeeded` - correcta
+         *     * `failed` - fallida
+         * @enum {string}
+         */
+        StatusEnum: "succeeded" | "failed";
         /** @description Cambio de nombre de usuario. / Username change. */
         UsernameChangeRequest: {
             current_password: string;
             username: string;
+        };
+        /** @description Vigilancia de novedades. / New-release watch. */
+        Watch: {
+            readonly id: number;
+            /** Nombre */
+            name: string;
+            /** Activa */
+            enabled?: boolean;
+            /**
+             * Creada
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Actualizada
+             * Format: date-time
+             */
+            readonly updated_at: string;
+        };
+        /** @description Vigilancia de novedades. / New-release watch. */
+        WatchRequest: {
+            /** Nombre */
+            name: string;
+            /** Activa */
+            enabled?: boolean;
+        };
+        /** @description Resultado de una comprobación, solo lectura. / One check result, read-only. */
+        WatchRun: {
+            readonly id: number;
+            /** Vigilancia */
+            readonly watch: number;
+            /**
+             * Inicio
+             * Format: date-time
+             */
+            readonly started_at: string;
+            /**
+             * Fin
+             * Format: date-time
+             */
+            readonly finished_at: string;
+            /** Estado */
+            readonly status: components["schemas"]["StatusEnum"];
+            /** Novedades encontradas */
+            readonly found: number;
+            /** Detalle */
+            readonly detail: string;
         };
     };
     responses: never;
@@ -375,6 +695,409 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    v1_preferences_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preference"][];
+                };
+            };
+        };
+    };
+    v1_preferences_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preference"];
+                };
+            };
+        };
+    };
+    v1_preferences_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreferenceWriteRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PreferenceWriteRequest"];
+                "multipart/form-data": components["schemas"]["PreferenceWriteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preference"];
+                };
+            };
+        };
+    };
+    v1_proxies_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"][];
+                };
+            };
+        };
+    };
+    v1_proxies_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProxyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProxyRequest"];
+                "multipart/form-data": components["schemas"]["ProxyRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"];
+                };
+            };
+        };
+    };
+    v1_proxies_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"];
+                };
+            };
+        };
+    };
+    v1_proxies_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProxyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProxyRequest"];
+                "multipart/form-data": components["schemas"]["ProxyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"];
+                };
+            };
+        };
+    };
+    v1_proxies_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    v1_proxies_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedProxyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedProxyRequest"];
+                "multipart/form-data": components["schemas"]["PatchedProxyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"];
+                };
+            };
+        };
+    };
+    v1_proxies_check_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProxyCheck"];
+                };
+            };
+        };
+    };
+    v1_watches_list: {
+        parameters: {
+            query?: {
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedWatchList"];
+                };
+            };
+        };
+    };
+    v1_watches_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WatchRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["WatchRequest"];
+                "multipart/form-data": components["schemas"]["WatchRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Watch"];
+                };
+            };
+        };
+    };
+    v1_watches_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Watch"];
+                };
+            };
+        };
+    };
+    v1_watches_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WatchRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["WatchRequest"];
+                "multipart/form-data": components["schemas"]["WatchRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Watch"];
+                };
+            };
+        };
+    };
+    v1_watches_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    v1_watches_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedWatchRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedWatchRequest"];
+                "multipart/form-data": components["schemas"]["PatchedWatchRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Watch"];
+                };
+            };
+        };
+    };
+    v1_watches_runs_list: {
+        parameters: {
+            query?: {
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedWatchRunList"];
                 };
             };
         };
