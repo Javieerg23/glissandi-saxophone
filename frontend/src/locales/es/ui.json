@@ -1,11 +1,31 @@
 {
   "ui": {
     "close": "Cerrar",
-    "list": { "empty": "No hay nada que mostrar." }
+    "list": {
+      "empty": "No hay nada que mostrar."
+    },
+    "filters": {
+      "title": "Filtros"
+    },
+    "job": {
+      "progress": "Progreso de la tarea",
+      "lines": "Registro de la tarea",
+      "stop": "Detener",
+      "status": {
+        "pending": "Pendiente",
+        "running": "En curso",
+        "stopping": "Deteniendo…",
+        "stopped": "Detenida",
+        "succeeded": "Terminada",
+        "failed": "Fallida",
+        "interrupted": "Interrumpida"
+      }
+    }
   },
   "nav": {
     "main": "Navegación principal",
-    "home": "Inicio"
+    "home": "Inicio",
+    "more": "Más"
   },
   "errors": {
     "network": "No se pudo conectar con el servidor.",

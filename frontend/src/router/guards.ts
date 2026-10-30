@@ -7,15 +7,19 @@ declare module 'vue-router' {
   interface RouteMeta {
     /** Ruta accesible sin sesión (login, configuración inicial). */
     public?: boolean
+    /** Ruta solo para administradores; al resto se le lleva al panel. */
+    adminOnly?: boolean
   }
 }
 
 /**
  * Protege las rutas privadas: sin sesión lleva al login (recordando el destino) y con
- * sesión saca de las públicas. Pregunta al servidor una sola vez por carga de página.
+ * sesión saca de las públicas; las de `adminOnly` llevan al panel a quien no es
+ * administrador. Pregunta al servidor una sola vez por carga de página.
  *
- * Guards private routes: anonymous users go to login (remembering the target) and
- * signed-in users are bounced off public routes. Asks the server once per page load.
+ * Guards private routes: anonymous users go to login (remembering the target), signed-in
+ * users are bounced off public routes and non-admins off `adminOnly` ones. Asks the
+ * server once per page load.
  */
 export async function authGuard(to: RouteLocationNormalized): Promise<true | RouteLocationRaw> {
   const session = useSessionStore()
@@ -27,7 +31,10 @@ export async function authGuard(to: RouteLocationNormalized): Promise<true | Rou
     }
   }
   if (to.meta.public) return session.isAuthenticated ? { name: 'dashboard' } : true
-  return session.isAuthenticated ? true : { name: 'login', query: { redirect: to.fullPath } }
+  if (!session.isAuthenticated) return { name: 'login', query: { redirect: to.fullPath } }
+  // Solo oculta la vista: quien protege los datos es el permiso de cada endpoint.
+  if (to.meta.adminOnly && session.user?.role !== 'administrador') return { name: 'dashboard' }
+  return true
 }
 
 /**

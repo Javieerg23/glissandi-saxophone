@@ -10,10 +10,13 @@ function paths(tree: Tree, prefix = ''): string[] {
   )
 }
 
-describe('textos de acceso, panel y cuenta', () => {
-  it.each(['auth', 'dashboard', 'account'])('«%s» tiene las mismas claves en es y en', (ns) => {
-    const es = paths(messages.es[ns] as Tree)
-    expect(es.length).toBeGreaterThan(0)
-    expect(paths(messages.en[ns] as Tree)).toEqual(es)
-  })
+describe('textos de acceso, panel, cuenta y comunes', () => {
+  it.each(['auth', 'dashboard', 'account', 'ui', 'nav'])(
+    '«%s» tiene las mismas claves en es y en',
+    (ns) => {
+      const es = paths(messages.es[ns] as Tree)
+      expect(es.length).toBeGreaterThan(0)
+      expect(paths(messages.en[ns] as Tree)).toEqual(es)
+    },
+  )
 })

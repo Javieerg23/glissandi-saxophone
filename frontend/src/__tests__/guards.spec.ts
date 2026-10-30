@@ -8,6 +8,7 @@ import { authGuard, safeRedirect } from '../router/guards'
 
 const private_ = { fullPath: '/panel?x=1', meta: {} } as RouteLocationNormalized
 const public_ = { fullPath: '/login', meta: { public: true } } as unknown as RouteLocationNormalized
+const admin = { fullPath: '/x', meta: { adminOnly: true } } as unknown as RouteLocationNormalized
 const anonymous = () =>
   server.use(http.get('/api/v1/accounts/me/', () => new HttpResponse(null, { status: 401 })))
 
@@ -38,6 +39,17 @@ describe('authGuard', () => {
   it('trata como anónimo si el servidor falla', async () => {
     server.use(http.get('/api/v1/accounts/me/', () => new HttpResponse(null, { status: 500 })))
     expect(await authGuard(public_)).toBe(true)
+  })
+
+  it('lleva al panel a quien no es administrador en una ruta de administrador', async () => {
+    server.use(
+      http.get('/api/v1/accounts/me/', () => HttpResponse.json({ username: 'u', role: 'usuario' })),
+    )
+    expect(await authGuard(admin)).toEqual({ name: 'dashboard' })
+  })
+
+  it('deja pasar a un administrador a una ruta de administrador', async () => {
+    expect(await authGuard(admin)).toBe(true)
   })
 
   it('pregunta al servidor solo una vez', async () => {

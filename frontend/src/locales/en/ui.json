@@ -1,11 +1,31 @@
 {
   "ui": {
     "close": "Close",
-    "list": { "empty": "Nothing to show." }
+    "list": {
+      "empty": "Nothing to show."
+    },
+    "filters": {
+      "title": "Filters"
+    },
+    "job": {
+      "progress": "Job progress",
+      "lines": "Job log",
+      "stop": "Stop",
+      "status": {
+        "pending": "Pending",
+        "running": "Running",
+        "stopping": "Stopping…",
+        "stopped": "Stopped",
+        "succeeded": "Finished",
+        "failed": "Failed",
+        "interrupted": "Interrupted"
+      }
+    }
   },
   "nav": {
     "main": "Main navigation",
-    "home": "Home"
+    "home": "Home",
+    "more": "More"
   },
   "errors": {
     "network": "Could not reach the server.",
