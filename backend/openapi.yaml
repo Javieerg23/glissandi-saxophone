@@ -69,7 +69,10 @@ paths:
   /api/v1/accounts/me/:
     get:
       operationId: v1_accounts_me_retrieve
-      description: Devuelve usuario y rol. / Returns username and role.
+      description: |-
+        Devuelve usuario, rol e intentos fallidos desde el último inicio de sesión.
+
+        Returns username, role and failed attempts since the last successful sign-in.
       tags:
       - accounts
       security:
@@ -79,7 +82,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Profile'
+                $ref: '#/components/schemas/Me'
           description: ''
   /api/v1/accounts/password/:
     post:
@@ -181,8 +184,309 @@ paths:
               schema:
                 $ref: '#/components/schemas/Profile'
           description: ''
+  /api/v1/accounts/users/:
+    get:
+      operationId: v1_accounts_users_list
+      description: Lista todos los usuarios. / Lists every user.
+      tags:
+      - accounts
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ManagedUser'
+          description: ''
+    post:
+      operationId: v1_accounts_users_create
+      description: Crea un usuario con su rol. / Creates a user with a role.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManagedUserCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ManagedUserCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ManagedUserCreateRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedUser'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+  /api/v1/accounts/users/{id}/:
+    patch:
+      operationId: v1_accounts_users_partial_update
+      description: |-
+        Cambia el rol o desactiva a un usuario. / Changes a user's role or deactivates them.
+
+        Nadie se quita a sí mismo el rol de administrador ni se desactiva, así
+        siempre queda un administrador con sesión.
+        Nobody can demote or deactivate themselves, so an administrator always remains.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este usuario.
+        required: true
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedManagedUserUpdateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedManagedUserUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedManagedUserUpdateRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedUser'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+  /api/v1/activity/entries/:
+    get:
+      operationId: v1_activity_entries_list
+      description: |-
+        Historial de actividad. Solo lectura: nadie borra ni modifica registros.
+
+        Activity history. Read only: nobody deletes or edits records.
+      parameters:
+      - in: query
+        name: action
+        schema:
+          type: string
+      - in: query
+        name: date_from
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: date_to
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: object_id
+        schema:
+          type: string
+      - in: query
+        name: object_type
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Número de resultados a devolver por página.
+        schema:
+          type: integer
+      - in: query
+        name: user
+        schema:
+          type: number
+      - in: query
+        name: username
+        schema:
+          type: string
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedActivityLogList'
+          description: ''
+  /api/v1/activity/entries/{id}/:
+    get:
+      operationId: v1_activity_entries_retrieve
+      description: |-
+        Historial de actividad. Solo lectura: nadie borra ni modifica registros.
+
+        Activity history. Read only: nobody deletes or edits records.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este activity log.
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityLog'
+          description: ''
+  /api/v1/activity/logs/:
+    get:
+      operationId: v1_activity_logs_list
+      description: |-
+        Logs técnicos de la base de datos, solo para administradores.
+
+        Technical logs stored in the database, administrators only.
+      parameters:
+      - in: query
+        name: date_from
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: date_to
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: min_level
+        schema:
+          type: integer
+      - in: query
+        name: module
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Número de resultados a devolver por página.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: task
+        schema: {}
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTechnicalLogList'
+          description: ''
+  /api/v1/activity/logs/{id}/:
+    get:
+      operationId: v1_activity_logs_retrieve
+      description: |-
+        Logs técnicos de la base de datos, solo para administradores.
+
+        Technical logs stored in the database, administrators only.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este Logging.
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechnicalLog'
+          description: ''
 components:
   schemas:
+    ActivityLog:
+      type: object
+      description: Una entrada del historial de actividad. / One activity history
+        entry.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user:
+          type: integer
+          readOnly: true
+          nullable: true
+        username:
+          type: string
+          readOnly: true
+        action:
+          type: string
+          readOnly: true
+        object_type:
+          type: string
+          description: Devuelve ``app.modelo`` del objeto afectado. / Returns ``app.model``
+            of the target.
+          readOnly: true
+        object_id:
+          type: string
+          readOnly: true
+        detail:
+          readOnly: true
+      required:
+      - action
+      - created_at
+      - detail
+      - id
+      - object_id
+      - object_type
+      - user
+      - username
     CredentialsRequest:
       type: object
       description: Usuario y contraseña de entrada. / Username and password input.
@@ -218,6 +522,100 @@ components:
       required:
       - message
       - status
+    LevelEnum:
+      enum:
+      - 0
+      - 20
+      - 30
+      - 10
+      - 40
+      - 50
+      type: integer
+      description: |-
+        * `0` - NotSet
+        * `20` - Info
+        * `30` - Warning
+        * `10` - Debug
+        * `40` - Error
+        * `50` - Fatal
+    ManagedUser:
+      type: object
+      description: Usuario tal como lo gestiona un administrador. / User as an administrator
+        manages it.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          title: Nombre de usuario
+          description: 'Requerido. 150 carácteres como máximo. Únicamente letras,
+            dígitos y @/./+/-/_ '
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        role:
+          type: string
+          description: Devuelve el rol del usuario. / Returns the user's role.
+          readOnly: true
+        is_active:
+          type: boolean
+          title: Activo
+          description: Indica si el usuario debe ser tratado como activo. Desmarque
+            esta opción en lugar de borrar la cuenta.
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Último inicio de sesión
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Fecha de alta
+      required:
+      - date_joined
+      - id
+      - last_login
+      - role
+      - username
+    ManagedUserCreateRequest:
+      type: object
+      description: Alta de un usuario con rol por un administrador. / Administrator-made
+        account with a role.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          default: usuario
+      required:
+      - password
+      - username
+    Me:
+      type: object
+      description: |-
+        Perfil con los intentos fallidos desde el último inicio de sesión.
+
+        Profile with the failed attempts since the last successful sign-in.
+      properties:
+        username:
+          type: string
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        failed_attempts:
+          type: integer
+      required:
+      - failed_attempts
+      - role
+      - username
     NewAccountRequest:
       type: object
       description: |-
@@ -236,6 +634,52 @@ components:
       required:
       - password
       - username
+    PaginatedActivityLogList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityLog'
+    PaginatedTechnicalLogList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/TechnicalLog'
     PasswordChangeRequest:
       type: object
       description: Cambio de contraseña. / Password change.
@@ -251,6 +695,15 @@ components:
       required:
       - current_password
       - new_password
+    PatchedManagedUserUpdateRequest:
+      type: object
+      description: 'Cambios parciales: rol y activo. / Partial changes: role and active
+        flag.'
+      properties:
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        is_active:
+          type: boolean
     Profile:
       type: object
       description: Usuario con sesión y su rol. / Signed-in user and role.
@@ -279,6 +732,39 @@ components:
           type: boolean
       required:
       - needed
+    TechnicalLog:
+      type: object
+      description: Una línea de log técnico en base de datos. / One technical log
+        line in the database.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        level:
+          allOf:
+          - $ref: '#/components/schemas/LevelEnum'
+          readOnly: true
+        logger_name:
+          type: string
+          readOnly: true
+        msg:
+          type: string
+          readOnly: true
+        trace:
+          type: string
+          readOnly: true
+          nullable: true
+      required:
+      - created_at
+      - id
+      - level
+      - logger_name
+      - msg
+      - trace
     UsernameChangeRequest:
       type: object
       description: Cambio de nombre de usuario. / Username change.

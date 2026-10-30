@@ -82,7 +82,22 @@ def test_me_informa_del_rol(api: APIClient, admin_user: User) -> None:
     """El perfil incluye el rol, que el frontend usa para mostrar secciones."""
     api.force_login(admin_user)
 
-    assert api.get(f"{BASE}/me/").json() == {"username": "admin", "role": ADMIN_GROUP}
+    assert api.get(f"{BASE}/me/").json() == {
+        "username": "admin",
+        "role": ADMIN_GROUP,
+        "failed_attempts": 0,
+    }
+
+
+def test_me_cuenta_los_fallos_desde_el_ultimo_acceso(api: APIClient, basic_user: User) -> None:
+    """Los fallos se cuentan hasta el siguiente inicio de sesión correcto."""
+    for _ in range(2):
+        api.post(f"{BASE}/login/", {"username": "pepe", "password": "mala"})
+    api.post(f"{BASE}/login/", {"username": "pepe", "password": PASSWORD})
+    assert api.get(f"{BASE}/me/").json()["failed_attempts"] == 0
+
+    api.post(f"{BASE}/login/", {"username": "pepe", "password": "mala"})
+    assert api.get(f"{BASE}/me/").json()["failed_attempts"] == 1
 
 
 def test_cambio_de_clave(api: APIClient, basic_user: User) -> None:

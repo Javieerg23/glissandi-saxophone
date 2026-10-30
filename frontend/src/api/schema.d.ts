@@ -66,7 +66,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Devuelve usuario y rol. / Returns username and role. */
+        /**
+         * @description Devuelve usuario, rol e intentos fallidos desde el último inicio de sesión.
+         *
+         *     Returns username, role and failed attempts since the last successful sign-in.
+         */
         get: operations["v1_accounts_me_retrieve"];
         put?: never;
         post?: never;
@@ -128,10 +132,148 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/accounts/users/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Lista todos los usuarios. / Lists every user. */
+        get: operations["v1_accounts_users_list"];
+        put?: never;
+        /** @description Crea un usuario con su rol. / Creates a user with a role. */
+        post: operations["v1_accounts_users_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/users/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * @description Cambia el rol o desactiva a un usuario. / Changes a user's role or deactivates them.
+         *
+         *     Nadie se quita a sí mismo el rol de administrador ni se desactiva, así
+         *     siempre queda un administrador con sesión.
+         *     Nobody can demote or deactivate themselves, so an administrator always remains.
+         */
+        patch: operations["v1_accounts_users_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/activity/entries/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Historial de actividad. Solo lectura: nadie borra ni modifica registros.
+         *
+         *     Activity history. Read only: nobody deletes or edits records.
+         */
+        get: operations["v1_activity_entries_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activity/entries/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Historial de actividad. Solo lectura: nadie borra ni modifica registros.
+         *
+         *     Activity history. Read only: nobody deletes or edits records.
+         */
+        get: operations["v1_activity_entries_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activity/logs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Logs técnicos de la base de datos, solo para administradores.
+         *
+         *     Technical logs stored in the database, administrators only.
+         */
+        get: operations["v1_activity_logs_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activity/logs/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Logs técnicos de la base de datos, solo para administradores.
+         *
+         *     Technical logs stored in the database, administrators only.
+         */
+        get: operations["v1_activity_logs_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Una entrada del historial de actividad. / One activity history entry. */
+        ActivityLog: {
+            readonly id: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly user: number | null;
+            readonly username: string;
+            readonly action: string;
+            /** @description Devuelve ``app.modelo`` del objeto afectado. / Returns ``app.model`` of the target. */
+            readonly object_type: string;
+            readonly object_id: string;
+            readonly detail: unknown;
+        };
         /** @description Usuario y contraseña de entrada. / Username and password input. */
         CredentialsRequest: {
             username: string;
@@ -147,6 +289,59 @@ export interface components {
             message: string;
         };
         /**
+         * @description * `0` - NotSet
+         *     * `20` - Info
+         *     * `30` - Warning
+         *     * `10` - Debug
+         *     * `40` - Error
+         *     * `50` - Fatal
+         * @enum {integer}
+         */
+        LevelEnum: 0 | 20 | 30 | 10 | 40 | 50;
+        /** @description Usuario tal como lo gestiona un administrador. / User as an administrator manages it. */
+        ManagedUser: {
+            readonly id: number;
+            /**
+             * Nombre de usuario
+             * @description Requerido. 150 carácteres como máximo. Únicamente letras, dígitos y @/./+/-/_
+             */
+            username: string;
+            /** @description Devuelve el rol del usuario. / Returns the user's role. */
+            readonly role: string;
+            /**
+             * Activo
+             * @description Indica si el usuario debe ser tratado como activo. Desmarque esta opción en lugar de borrar la cuenta.
+             */
+            is_active?: boolean;
+            /**
+             * Último inicio de sesión
+             * Format: date-time
+             */
+            readonly last_login: string | null;
+            /**
+             * Fecha de alta
+             * Format: date-time
+             */
+            readonly date_joined: string;
+        };
+        /** @description Alta de un usuario con rol por un administrador. / Administrator-made account with a role. */
+        ManagedUserCreateRequest: {
+            username: string;
+            password: string;
+            /** @default usuario */
+            role: components["schemas"]["RoleEnum"];
+        };
+        /**
+         * @description Perfil con los intentos fallidos desde el último inicio de sesión.
+         *
+         *     Profile with the failed attempts since the last successful sign-in.
+         */
+        Me: {
+            username: string;
+            role: components["schemas"]["RoleEnum"];
+            failed_attempts: number;
+        };
+        /**
          * @description Alta de la primera cuenta; valida usuario y contraseña con las reglas de Django.
          *
          *     First account creation, validated with Django's own rules.
@@ -155,10 +350,45 @@ export interface components {
             username: string;
             password: string;
         };
+        PaginatedActivityLogList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ActivityLog"][];
+        };
+        PaginatedTechnicalLogList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["TechnicalLog"][];
+        };
         /** @description Cambio de contraseña. / Password change. */
         PasswordChangeRequest: {
             current_password: string;
             new_password: string;
+        };
+        /** @description Cambios parciales: rol y activo. / Partial changes: role and active flag. */
+        PatchedManagedUserUpdateRequest: {
+            role?: components["schemas"]["RoleEnum"];
+            is_active?: boolean;
         };
         /** @description Usuario con sesión y su rol. / Signed-in user and role. */
         Profile: {
@@ -174,6 +404,16 @@ export interface components {
         /** @description Si falta crear el primer administrador. / Whether the first admin is still missing. */
         SetupStatus: {
             needed: boolean;
+        };
+        /** @description Una línea de log técnico en base de datos. / One technical log line in the database. */
+        TechnicalLog: {
+            readonly id: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly level: components["schemas"]["LevelEnum"];
+            readonly logger_name: string;
+            readonly msg: string;
+            readonly trace: string | null;
         };
         /** @description Cambio de nombre de usuario. / Username change. */
         UsernameChangeRequest: {
@@ -273,7 +513,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Profile"];
+                    "application/json": components["schemas"]["Me"];
                 };
             };
         };
@@ -375,6 +615,199 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    v1_accounts_users_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedUser"][];
+                };
+            };
+        };
+    };
+    v1_accounts_users_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManagedUserCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ManagedUserCreateRequest"];
+                "multipart/form-data": components["schemas"]["ManagedUserCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedUser"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_accounts_users_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este usuario. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedManagedUserUpdateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedManagedUserUpdateRequest"];
+                "multipart/form-data": components["schemas"]["PatchedManagedUserUpdateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedUser"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_activity_entries_list: {
+        parameters: {
+            query?: {
+                action?: string;
+                date_from?: string;
+                date_to?: string;
+                object_id?: string;
+                object_type?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                user?: number;
+                username?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedActivityLogList"];
+                };
+            };
+        };
+    };
+    v1_activity_entries_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este activity log. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityLog"];
+                };
+            };
+        };
+    };
+    v1_activity_logs_list: {
+        parameters: {
+            query?: {
+                date_from?: string;
+                date_to?: string;
+                min_level?: number;
+                module?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                search?: string;
+                task?: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTechnicalLogList"];
+                };
+            };
+        };
+    };
+    v1_activity_logs_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este Logging. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalLog"];
                 };
             };
         };
