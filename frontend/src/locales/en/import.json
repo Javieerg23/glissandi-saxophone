@@ -1,0 +1,25 @@
+{
+  "import": {
+    "nav": "Import",
+    "title": "Import artists",
+    "search": {
+      "label": "Artist",
+      "submit": "Search",
+      "empty": "Type an artist name to search for it on Deezer.",
+      "none": "Deezer found no artist matching “{q}”.",
+      "results": "Results"
+    },
+    "artist": {
+      "albums": "{n} album | {n} albums",
+      "inCatalog": "Already in the library",
+      "blocked": "Blocked"
+    },
+    "selected": {
+      "title": "Selected ({n})",
+      "remove": "Remove {name}"
+    },
+    "verify": "Verify with MusicBrainz",
+    "start": "Import {n} artist | Import {n} artists",
+    "folder": "Import a folder"
+  }
+}
