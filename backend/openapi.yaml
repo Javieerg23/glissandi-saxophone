@@ -1161,6 +1161,690 @@ paths:
               schema:
                 $ref: '#/components/schemas/Track'
           description: ''
+  /api/v1/jobs/runs/:
+    get:
+      operationId: v1_jobs_runs_list
+      description: |-
+        Lanza, consulta y detiene tareas en segundo plano.
+
+        Starts, inspects and stops background tasks. Runs are never edited or
+        deleted through the API: the engine owns them.
+      parameters:
+      - in: query
+        name: kind
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - in: query
+        name: started_after
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: started_before
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: status
+        schema:
+          type: string
+          title: Estado
+          enum:
+          - failed
+          - interrupted
+          - pending
+          - running
+          - stopped
+          - stopping
+          - succeeded
+        description: |-
+          * `pending` - pendiente
+          * `running` - en curso
+          * `stopping` - deteniéndose
+          * `stopped` - detenida
+          * `succeeded` - correcta
+          * `failed` - fallida
+          * `interrupted` - interrumpida
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobRunList'
+          description: ''
+    post:
+      operationId: v1_jobs_runs_create
+      description: |-
+        Lanza una tarea; 409 si ya hay otra activa del mismo tipo.
+
+        Starts a task; 409 if one of the same kind is already active.
+      tags:
+      - jobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobStartRequest'
+            examples:
+              Importar:
+                value:
+                  kind: import
+                  params:
+                    deezer_ids:
+                    - 27
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JobStartRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JobStartRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+              examples:
+                Importar:
+                  value:
+                    kind: import
+                    params:
+                      deezer_ids:
+                      - 27
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+  /api/v1/jobs/runs/{id}/:
+    get:
+      operationId: v1_jobs_runs_retrieve
+      description: |-
+        Lanza, consulta y detiene tareas en segundo plano.
+
+        Starts, inspects and stops background tasks. Runs are never edited or
+        deleted through the API: the engine owns them.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este job run.
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+          description: ''
+  /api/v1/jobs/runs/{id}/lines/:
+    get:
+      operationId: v1_jobs_runs_lines_list
+      description: |-
+        Líneas de registro posteriores a ``after`` (por defecto, desde el principio).
+
+        Log lines after position ``after`` (default: from the start).
+      parameters:
+      - in: query
+        name: after
+        schema:
+          type: integer
+        description: Última posición ya recibida. / Last position received.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este job run.
+        required: true
+      - in: query
+        name: kind
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      - in: query
+        name: started_after
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: started_before
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: status
+        schema:
+          type: string
+          title: Estado
+          enum:
+          - failed
+          - interrupted
+          - pending
+          - running
+          - stopped
+          - stopping
+          - succeeded
+        description: |-
+          * `pending` - pendiente
+          * `running` - en curso
+          * `stopping` - deteniéndose
+          * `stopped` - detenida
+          * `succeeded` - correcta
+          * `failed` - fallida
+          * `interrupted` - interrumpida
+      tags:
+      - jobs
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJobRunLineList'
+          description: ''
+  /api/v1/jobs/runs/{id}/stop/:
+    post:
+      operationId: v1_jobs_runs_stop_create
+      description: Pide detener la tarea; 409 si ya terminó. / Asks to stop; 409 if
+        already closed.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este job run.
+        required: true
+      tags:
+      - jobs
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+  /api/v1/preferences/:
+    get:
+      operationId: v1_preferences_list
+      description: |-
+        Lista todos los ajustes con su valor y su valor por defecto.
+
+        Lists every setting with its value and its default.
+      tags:
+      - preferences
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Preference'
+          description: ''
+  /api/v1/preferences/{key}/:
+    get:
+      operationId: v1_preferences_retrieve
+      description: Devuelve un ajuste. / Returns one setting.
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - preferences
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+    put:
+      operationId: v1_preferences_update
+      description: Cambia el valor de un ajuste y lo registra. / Changes a setting
+        and logs it.
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - preferences
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PreferenceWriteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PreferenceWriteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PreferenceWriteRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+          description: ''
+  /api/v1/proxies/:
+    get:
+      operationId: v1_proxies_list
+      description: CRUD de proxies y prueba de conexión. / Proxy CRUD and connection
+        test.
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Proxy'
+          description: ''
+    post:
+      operationId: v1_proxies_create
+      description: CRUD de proxies y prueba de conexión. / Proxy CRUD and connection
+        test.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProxyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProxyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProxyRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proxy'
+          description: ''
+  /api/v1/proxies/{id}/:
+    get:
+      operationId: v1_proxies_retrieve
+      description: CRUD de proxies y prueba de conexión. / Proxy CRUD and connection
+        test.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este proxy.
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proxy'
+          description: ''
+    put:
+      operationId: v1_proxies_update
+      description: CRUD de proxies y prueba de conexión. / Proxy CRUD and connection
+        test.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este proxy.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProxyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProxyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProxyRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proxy'
+          description: ''
+    patch:
+      operationId: v1_proxies_partial_update
+      description: CRUD de proxies y prueba de conexión. / Proxy CRUD and connection
+        test.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este proxy.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProxyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProxyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProxyRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proxy'
+          description: ''
+    delete:
+      operationId: v1_proxies_destroy
+      description: CRUD de proxies y prueba de conexión. / Proxy CRUD and connection
+        test.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este proxy.
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/proxies/{id}/check/:
+    post:
+      operationId: v1_proxies_check_create
+      description: |-
+        Comprueba que el proxy da salida al tráfico. / Checks that the proxy relays traffic.
+
+        Un código 2xx o 3xx cuenta como correcto.
+        A 2xx or 3xx status counts as success.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este proxy.
+        required: true
+      tags:
+      - proxies
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProxyCheck'
+          description: ''
+  /api/v1/watches/:
+    get:
+      operationId: v1_watches_list
+      description: CRUD de vigilancias e historial de comprobaciones. / Watch CRUD
+        and check history.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWatchList'
+          description: ''
+    post:
+      operationId: v1_watches_create
+      description: CRUD de vigilancias e historial de comprobaciones. / Watch CRUD
+        and check history.
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WatchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WatchRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Watch'
+          description: ''
+  /api/v1/watches/{id}/:
+    get:
+      operationId: v1_watches_retrieve
+      description: CRUD de vigilancias e historial de comprobaciones. / Watch CRUD
+        and check history.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este watch.
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Watch'
+          description: ''
+    put:
+      operationId: v1_watches_update
+      description: CRUD de vigilancias e historial de comprobaciones. / Watch CRUD
+        and check history.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este watch.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WatchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WatchRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Watch'
+          description: ''
+    patch:
+      operationId: v1_watches_partial_update
+      description: CRUD de vigilancias e historial de comprobaciones. / Watch CRUD
+        and check history.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este watch.
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWatchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWatchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWatchRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Watch'
+          description: ''
+    delete:
+      operationId: v1_watches_destroy
+      description: CRUD de vigilancias e historial de comprobaciones. / Watch CRUD
+        and check history.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este watch.
+        required: true
+      tags:
+      - v1
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/watches/{id}/runs/:
+    get:
+      operationId: v1_watches_runs_list
+      description: |-
+        Historial de comprobaciones, de la más reciente a la más antigua.
+
+        Check history, newest first.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: Un valor de entero único que identifique este watch.
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: Un número de página dentro del conjunto de resultados paginado.
+        schema:
+          type: integer
+      tags:
+      - watches
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWatchRunList'
+          description: ''
 components:
   schemas:
     Album:
@@ -1468,6 +2152,127 @@ components:
       - history_id
       - history_type
       - history_user
+    JobRun:
+      type: object
+      description: |-
+        Estado y progreso de una ejecución, solo lectura.
+
+        State and progress of a run, read only.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        kind:
+          type: string
+          readOnly: true
+          title: Tipo
+        params:
+          readOnly: true
+          title: Parámetros
+        user:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/JobRunStatusEnum'
+          readOnly: true
+          title: Estado
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Inicio
+        finished_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Fin
+        done:
+          type: integer
+          readOnly: true
+          title: Hechas
+        total:
+          type: integer
+          readOnly: true
+        current:
+          type: string
+          readOnly: true
+          title: Elemento actual
+        summary:
+          readOnly: true
+          title: Resumen
+      required:
+      - current
+      - done
+      - finished_at
+      - id
+      - kind
+      - params
+      - started_at
+      - status
+      - summary
+      - total
+      - user
+    JobRunLine:
+      type: object
+      description: Línea del registro de una ejecución. / One log line of a run.
+      properties:
+        position:
+          type: integer
+          readOnly: true
+          title: Posición
+        level:
+          allOf:
+          - $ref: '#/components/schemas/LevelEnum'
+          readOnly: true
+          title: Nivel
+        message:
+          type: string
+          readOnly: true
+          title: Mensaje
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Fecha
+      required:
+      - created_at
+      - level
+      - message
+      - position
+    JobRunStatusEnum:
+      enum:
+      - pending
+      - running
+      - stopping
+      - stopped
+      - succeeded
+      - failed
+      - interrupted
+      type: string
+      description: |-
+        * `pending` - pendiente
+        * `running` - en curso
+        * `stopping` - deteniéndose
+        * `stopped` - detenida
+        * `succeeded` - correcta
+        * `failed` - fallida
+        * `interrupted` - interrumpida
+    JobStartRequest:
+      type: object
+      description: Petición para lanzar una tarea. / Request to start a task.
+      properties:
+        kind:
+          type: string
+          minLength: 1
+          description: Tipo registrado. / Registered kind.
+        params:
+          type: object
+          additionalProperties: {}
+          description: Parámetros JSON. / JSON params.
+      required:
+      - kind
     KindEnum:
       enum:
       - artist
@@ -1478,6 +2283,16 @@ components:
         * `artist` - Artista
         * `album` - Álbum
         * `track` - Canción
+    LevelEnum:
+      enum:
+      - info
+      - warning
+      - error
+      type: string
+      description: |-
+        * `info` - información
+        * `warning` - aviso
+        * `error` - error
     LibrarySummary:
       type: object
       description: Recuentos de la biblioteca. / Library counts.
@@ -1606,6 +2421,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/HistoryEntry'
+    PaginatedJobRunLineList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobRunLine'
+    PaginatedJobRunList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobRun'
     PaginatedTrackList:
       type: object
       required:
@@ -1629,6 +2490,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Track'
+    PaginatedWatchList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Watch'
+    PaginatedWatchRunList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchRun'
     PasswordChangeRequest:
       type: object
       description: Cambio de contraseña. / Password change.
@@ -1680,6 +2587,20 @@ components:
             maxLength: 500
           - type: string
             maxLength: 0
+    PatchedProxyRequest:
+      type: object
+      description: |-
+        Proxy saliente. Los contadores los actualiza la descarga, no la API.
+
+        Outbound proxy. The counters are maintained by downloads, not by the API.
+      properties:
+        url:
+          type: string
+          minLength: 1
+          maxLength: 500
+        enabled:
+          type: boolean
+          title: Activo
     PatchedTrackRequest:
       type: object
       description: Canción con sus artistas; título y numeración son editables. /
@@ -1699,6 +2620,47 @@ components:
           maximum: 9223372036854775807
           minimum: 0
           format: int64
+    PatchedWatchRequest:
+      type: object
+      description: Vigilancia de novedades. / New-release watch.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Nombre
+          maxLength: 120
+        enabled:
+          type: boolean
+          title: Activa
+    Preference:
+      type: object
+      description: Ajuste con valor efectivo y por defecto. / Setting with effective
+        and default value.
+      properties:
+        key:
+          type: string
+          readOnly: true
+        value:
+          readOnly: true
+        default:
+          readOnly: true
+      required:
+      - default
+      - key
+      - value
+    PreferenceWriteRequest:
+      type: object
+      description: |-
+        Valor nuevo de un ajuste. / New value for a setting.
+
+        Solo se admite el mismo tipo que el valor por defecto: así un ajuste no
+        cambia de forma y el código que lo lee no tiene que defenderse de ello.
+        Only the default's type is accepted, so a setting never changes shape and
+        its readers need no defensive parsing.
+      properties:
+        value: {}
+      required:
+      - value
     Profile:
       type: object
       description: Usuario con sesión y su rol. / Signed-in user and role.
@@ -1710,6 +2672,83 @@ components:
       required:
       - role
       - username
+    Proxy:
+      type: object
+      description: |-
+        Proxy saliente. Los contadores los actualiza la descarga, no la API.
+
+        Outbound proxy. The counters are maintained by downloads, not by the API.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          maxLength: 500
+        enabled:
+          type: boolean
+          title: Activo
+        success_count:
+          type: integer
+          readOnly: true
+          title: Éxitos
+        failure_count:
+          type: integer
+          readOnly: true
+          title: Fallos
+        last_used_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Último uso
+        last_failed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Último fallo
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Creado
+      required:
+      - created_at
+      - failure_count
+      - id
+      - last_failed_at
+      - last_used_at
+      - success_count
+      - url
+    ProxyCheck:
+      type: object
+      description: Resultado de probar un proxy. / Result of testing a proxy.
+      properties:
+        ok:
+          type: boolean
+        status_code:
+          type: integer
+          nullable: true
+      required:
+      - ok
+      - status_code
+    ProxyRequest:
+      type: object
+      description: |-
+        Proxy saliente. Los contadores los actualiza la descarga, no la API.
+
+        Outbound proxy. The counters are maintained by downloads, not by the API.
+      properties:
+        url:
+          type: string
+          minLength: 1
+          maxLength: 500
+        enabled:
+          type: boolean
+          title: Activo
+      required:
+      - url
     RevertRequest:
       type: object
       description: Versión a la que volver. / Version to go back to.
@@ -1831,6 +2870,100 @@ components:
       required:
       - current_password
       - username
+    Watch:
+      type: object
+      description: Vigilancia de novedades. / New-release watch.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Nombre
+          maxLength: 120
+        enabled:
+          type: boolean
+          title: Activa
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Creada
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Actualizada
+      required:
+      - created_at
+      - id
+      - name
+      - updated_at
+    WatchRequest:
+      type: object
+      description: Vigilancia de novedades. / New-release watch.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Nombre
+          maxLength: 120
+        enabled:
+          type: boolean
+          title: Activa
+      required:
+      - name
+    WatchRun:
+      type: object
+      description: Resultado de una comprobación, solo lectura. / One check result,
+        read-only.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        watch:
+          type: integer
+          readOnly: true
+          title: Vigilancia
+        started_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Inicio
+        finished_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Fin
+        status:
+          allOf:
+          - $ref: '#/components/schemas/WatchRunStatusEnum'
+          readOnly: true
+          title: Estado
+        found:
+          type: integer
+          readOnly: true
+          title: Novedades encontradas
+        detail:
+          type: string
+          readOnly: true
+          title: Detalle
+      required:
+      - detail
+      - finished_at
+      - found
+      - id
+      - started_at
+      - status
+      - watch
+    WatchRunStatusEnum:
+      enum:
+      - succeeded
+      - failed
+      type: string
+      description: |-
+        * `succeeded` - correcta
+        * `failed` - fallida
   securitySchemes:
     cookieAuth:
       type: apiKey

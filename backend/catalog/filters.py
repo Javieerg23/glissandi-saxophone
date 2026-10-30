@@ -1,7 +1,12 @@
 """Filtros de la API del catálogo. / Catalogue API filters."""
 
 from django.db.models import QuerySet
-from django_filters import BooleanFilter, DateFilter, FilterSet, NumberFilter
+from django_filters import (  # type: ignore[import-untyped]
+    BooleanFilter,
+    DateFilter,
+    FilterSet,
+    NumberFilter,
+)
 
 from .models import Album, Artist, Track
 

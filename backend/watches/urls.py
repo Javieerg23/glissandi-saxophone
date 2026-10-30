@@ -1,5 +1,10 @@
 """Rutas de la app ``watches``. / ``watches`` app URLs."""
 
-from django.urls import URLPattern
+from rest_framework.routers import SimpleRouter
 
-urlpatterns: list[URLPattern] = []
+from . import views
+
+router = SimpleRouter()
+router.register("", views.WatchViewSet, basename="watch")
+
+urlpatterns = router.urls

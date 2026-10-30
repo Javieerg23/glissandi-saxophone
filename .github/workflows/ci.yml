@@ -70,9 +70,14 @@ jobs:
           DJANGO_SETTINGS_MODULE: config.settings.test
       # Las migraciones iniciales crean tablas vacías; las de terceros no son nuestras.
       # Initial migrations create empty tables; third-party ones are not ours.
+      # watches 0002 solo añade columnas con valor por defecto; en SQLite se reconstruye la tabla
+      # y el linter lo confunde con un cambio a NOT NULL.
+      # watches 0002 only adds columns with defaults; SQLite rebuilds the table and the linter
+      # mistakes that for a change to NOT NULL.
       - run: >-
           python manage.py lintmigrations --ignore-initial-migrations
           --exclude-apps axes django_db_logger simple_history
+          --ignore-name 0002_add_schedule_and_watch_artist
         env:
           DJANGO_SETTINGS_MODULE: config.settings.test
       - run: pytest --cov-report=xml

@@ -9,4 +9,10 @@ feature adds its keys here.
 
 from typing import Final
 
-DEFAULTS: Final[dict[str, object]] = {}
+from integrations.audio import DEFAULT_TEMPLATE
+
+DEFAULTS: Final[dict[str, object]] = {
+    "download.format": "mp3",
+    "download.folder": "music",
+    "download.name_template": DEFAULT_TEMPLATE,
+}

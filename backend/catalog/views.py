@@ -15,7 +15,7 @@ import requests
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.utils.translation import gettext as _
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend  # type: ignore[import-untyped]
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
