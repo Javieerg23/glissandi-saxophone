@@ -6,7 +6,7 @@ dev:
 	cd frontend && npm run dev
 
 lint:
-	cd backend && ruff check . && ruff format --check . && mypy .
+	cd backend && ruff check . && ruff format --check . && mypy . && interrogate .
 	cd frontend && npm run lint && npm run typecheck
 
 test:

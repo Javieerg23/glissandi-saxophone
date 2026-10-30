@@ -9,3 +9,5 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [Se
 
 - Esqueleto de backend (Django + DRF) y frontend (Vue 3 + Vite + TypeScript).
 - Backend (Django + DRF) and frontend (Vue 3 + Vite + TypeScript) skeletons.
+- CI endurecida (interrogate, diff-cover, pip-audit, npm audit, `check --deploy`, django-migration-linter) y mutación nocturna (mutmut y StrykerJS).
+- Hardened CI (interrogate, diff-cover, pip-audit, npm audit, `check --deploy`, django-migration-linter) and nightly mutation testing (mutmut and StrykerJS).

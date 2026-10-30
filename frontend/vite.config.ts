@@ -14,6 +14,8 @@ export default defineConfig({
       provider: 'v8',
       include: ['src/**'],
       exclude: ['src/main.ts', 'src/mocks/browser.ts'],
+      // Suelo global del 80 %. / 80 % global floor.
+      thresholds: { lines: 80, branches: 80, functions: 80, statements: 80 },
     },
   },
 })
