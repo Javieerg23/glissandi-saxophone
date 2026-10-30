@@ -128,6 +128,93 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/jobs/runs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Lanza, consulta y detiene tareas en segundo plano.
+         *
+         *     Starts, inspects and stops background tasks. Runs are never edited or
+         *     deleted through the API: the engine owns them.
+         */
+        get: operations["v1_jobs_runs_list"];
+        put?: never;
+        /**
+         * @description Lanza una tarea; 409 si ya hay otra activa del mismo tipo.
+         *
+         *     Starts a task; 409 if one of the same kind is already active.
+         */
+        post: operations["v1_jobs_runs_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/runs/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Lanza, consulta y detiene tareas en segundo plano.
+         *
+         *     Starts, inspects and stops background tasks. Runs are never edited or
+         *     deleted through the API: the engine owns them.
+         */
+        get: operations["v1_jobs_runs_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/runs/{id}/lines/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Líneas de registro posteriores a ``after`` (por defecto, desde el principio).
+         *
+         *     Log lines after position ``after`` (default: from the start).
+         */
+        get: operations["v1_jobs_runs_lines_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/runs/{id}/stop/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Pide detener la tarea; 409 si ya terminó. / Asks to stop; 409 if already closed. */
+        post: operations["v1_jobs_runs_stop_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/preferences/": {
         parameters: {
             query?: never;
@@ -305,6 +392,79 @@ export interface components {
             message: string;
         };
         /**
+         * @description Estado y progreso de una ejecución, solo lectura.
+         *
+         *     State and progress of a run, read only.
+         */
+        JobRun: {
+            readonly id: number;
+            /** Tipo */
+            readonly kind: string;
+            /** Parámetros */
+            readonly params: unknown;
+            readonly user: string;
+            /** Estado */
+            readonly status: components["schemas"]["JobRunStatusEnum"];
+            /**
+             * Inicio
+             * Format: date-time
+             */
+            readonly started_at: string;
+            /**
+             * Fin
+             * Format: date-time
+             */
+            readonly finished_at: string | null;
+            /** Hechas */
+            readonly done: number;
+            readonly total: number;
+            /** Elemento actual */
+            readonly current: string;
+            /** Resumen */
+            readonly summary: unknown;
+        };
+        /** @description Línea del registro de una ejecución. / One log line of a run. */
+        JobRunLine: {
+            /** Posición */
+            readonly position: number;
+            /** Nivel */
+            readonly level: components["schemas"]["LevelEnum"];
+            /** Mensaje */
+            readonly message: string;
+            /**
+             * Fecha
+             * Format: date-time
+             */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `pending` - pendiente
+         *     * `running` - en curso
+         *     * `stopping` - deteniéndose
+         *     * `stopped` - detenida
+         *     * `succeeded` - correcta
+         *     * `failed` - fallida
+         *     * `interrupted` - interrumpida
+         * @enum {string}
+         */
+        JobRunStatusEnum: "pending" | "running" | "stopping" | "stopped" | "succeeded" | "failed" | "interrupted";
+        /** @description Petición para lanzar una tarea. / Request to start a task. */
+        JobStartRequest: {
+            /** @description Tipo registrado. / Registered kind. */
+            kind: string;
+            /** @description Parámetros JSON. / JSON params. */
+            params?: {
+                [key: string]: unknown;
+            };
+        };
+        /**
+         * @description * `info` - información
+         *     * `warning` - aviso
+         *     * `error` - error
+         * @enum {string}
+         */
+        LevelEnum: "info" | "warning" | "error";
+        /**
          * @description Alta de la primera cuenta; valida usuario y contraseña con las reglas de Django.
          *
          *     First account creation, validated with Django's own rules.
@@ -312,6 +472,36 @@ export interface components {
         NewAccountRequest: {
             username: string;
             password: string;
+        };
+        PaginatedJobRunLineList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["JobRunLine"][];
+        };
+        PaginatedJobRunList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["JobRun"][];
         };
         PaginatedWatchList: {
             /** @example 123 */
@@ -442,12 +632,6 @@ export interface components {
         SetupStatus: {
             needed: boolean;
         };
-        /**
-         * @description * `succeeded` - correcta
-         *     * `failed` - fallida
-         * @enum {string}
-         */
-        StatusEnum: "succeeded" | "failed";
         /** @description Cambio de nombre de usuario. / Username change. */
         UsernameChangeRequest: {
             current_password: string;
@@ -494,12 +678,18 @@ export interface components {
              */
             readonly finished_at: string;
             /** Estado */
-            readonly status: components["schemas"]["StatusEnum"];
+            readonly status: components["schemas"]["WatchRunStatusEnum"];
             /** Novedades encontradas */
             readonly found: number;
             /** Detalle */
             readonly detail: string;
         };
+        /**
+         * @description * `succeeded` - correcta
+         *     * `failed` - fallida
+         * @enum {string}
+         */
+        WatchRunStatusEnum: "succeeded" | "failed";
     };
     responses: never;
     parameters: never;
@@ -695,6 +885,174 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_list: {
+        parameters: {
+            query?: {
+                kind?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                started_after?: string;
+                started_before?: string;
+                /**
+                 * @description * `pending` - pendiente
+                 *     * `running` - en curso
+                 *     * `stopping` - deteniéndose
+                 *     * `stopped` - detenida
+                 *     * `succeeded` - correcta
+                 *     * `failed` - fallida
+                 *     * `interrupted` - interrumpida
+                 */
+                status?: "failed" | "interrupted" | "pending" | "running" | "stopped" | "stopping" | "succeeded";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedJobRunList"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JobStartRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["JobStartRequest"];
+                "multipart/form-data": components["schemas"]["JobStartRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este job run. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_lines_list: {
+        parameters: {
+            query?: {
+                /** @description Última posición ya recibida. / Last position received. */
+                after?: number;
+                kind?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                started_after?: string;
+                started_before?: string;
+                /**
+                 * @description * `pending` - pendiente
+                 *     * `running` - en curso
+                 *     * `stopping` - deteniéndose
+                 *     * `stopped` - detenida
+                 *     * `succeeded` - correcta
+                 *     * `failed` - fallida
+                 *     * `interrupted` - interrumpida
+                 */
+                status?: "failed" | "interrupted" | "pending" | "running" | "stopped" | "stopping" | "succeeded";
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este job run. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedJobRunLineList"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_stop_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este job run. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
                 };
             };
         };
