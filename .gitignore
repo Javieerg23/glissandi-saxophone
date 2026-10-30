@@ -21,6 +21,7 @@ coverage/
 
 # Informes y documentación generada
 playwright-report/
+test-results/
 reports/
 site/
 

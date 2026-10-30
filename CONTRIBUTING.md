@@ -16,6 +16,7 @@
 python -m venv .venv && . .venv/bin/activate
 pip install -r backend/requirements-dev.txt
 npm --prefix frontend install
+npx --prefix frontend playwright install chromium  # solo para `make e2e` / only for `make e2e`
 pre-commit install
 ```
 
