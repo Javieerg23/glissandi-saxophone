@@ -1,0 +1,24 @@
+{
+  "dashboard": {
+    "nav": "Dashboard",
+    "title": "Dashboard",
+    "library": "Library",
+    "summary": {
+      "artists": "Artists",
+      "albums": "Albums",
+      "tracks": "Tracks",
+      "downloaded": "Downloaded"
+    },
+    "jobs": {
+      "title": "Running jobs",
+      "empty": "No jobs are running.",
+      "progress": "{kind} progress",
+      "kind": {
+        "import": "Import",
+        "download": "Download",
+        "watch_check": "New releases check",
+        "maintenance": "Utilities"
+      }
+    }
+  }
+}

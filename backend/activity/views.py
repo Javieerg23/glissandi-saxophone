@@ -2,10 +2,10 @@
 
 from typing import Any, cast
 
-import django_filters
+import django_filters  # type: ignore[import-untyped]
 from django.db.models import QuerySet
 from django_db_logger.models import StatusLog
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend  # type: ignore[import-untyped]
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
@@ -28,7 +28,7 @@ class Pagination(PageNumberPagination):
     max_page_size = 200
 
 
-class ActivityFilter(django_filters.FilterSet):
+class ActivityFilter(django_filters.FilterSet):  # type: ignore[misc]
     """Filtros del historial de actividad. / Activity history filters."""
 
     date_from = django_filters.DateFilter(field_name="created_at", lookup_expr="date__gte")
@@ -48,7 +48,7 @@ class ActivityFilter(django_filters.FilterSet):
         return queryset.filter(content_type__app_label=app_label, content_type__model=model)
 
 
-class TechnicalLogFilter(django_filters.FilterSet):
+class TechnicalLogFilter(django_filters.FilterSet):  # type: ignore[misc]
     """Filtros de los logs técnicos. / Technical log filters."""
 
     min_level = django_filters.NumberFilter(field_name="level", lookup_expr="gte")

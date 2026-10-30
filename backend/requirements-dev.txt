@@ -18,4 +18,3 @@ interrogate
 diff-cover
 pip-audit
 mutmut
-types-django-filter

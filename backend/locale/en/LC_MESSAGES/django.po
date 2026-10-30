@@ -14,3 +14,15 @@ msgstr "The initial setup has already been done."
 
 msgid "Usuario o contraseña incorrectos."
 msgstr "Incorrect username or password."
+
+msgid "Hay artistas repetidos."
+msgstr "There are duplicate artists."
+
+msgid "Algún artista no existe."
+msgstr "Some artist does not exist."
+
+msgid "Esa versión no existe."
+msgstr "That version does not exist."
+
+msgid "Deezer no responde."
+msgstr "Deezer is not responding."

@@ -12,7 +12,15 @@ export default tseslint.config(
   {
     files: ['**/*.{ts,vue}'],
     languageOptions: {
-      globals: { navigator: 'readonly', document: 'readonly', HTMLDialogElement: 'readonly' },
+      globals: {
+        navigator: 'readonly',
+        document: 'readonly',
+        HTMLDialogElement: 'readonly',
+        HTMLSelectElement: 'readonly',
+        Event: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+      },
     },
   },
   {
