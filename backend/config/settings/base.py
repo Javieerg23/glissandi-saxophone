@@ -223,4 +223,11 @@ LOGGING = {
 
 # --- Tareas / Tasks ---
 
+# Hilos del ejecutor: como mucho una tarea por tipo, así que basta con unos pocos.
+# Executor threads: at most one task per kind runs, so a few are plenty.
+JOBS_MAX_WORKERS = 4
+# Con True las tareas se ejecutan en el mismo hilo que las lanza (tests).
+# When True tasks run in the calling thread (tests).
+JOBS_SYNCHRONOUS = False
+
 # --- Historial / History ---

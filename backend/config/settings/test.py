@@ -19,3 +19,7 @@ INSTALLED_APPS = [*INSTALLED_APPS, "tests.testapp", "django_migration_linter"]  
 # El cliente de test habla HTTP; las cookies conservan su indicador Secure para comprobarlo.
 # The test client speaks HTTP; cookies keep their Secure flag so it can be asserted.
 SECURE_SSL_REDIRECT = False
+
+# Tareas en el hilo del test: sin hilos ni carreras con la transacción del test.
+# Tasks run in the test's thread: no threads, no races with the test transaction.
+JOBS_SYNCHRONOUS = True
