@@ -1,5 +1,5 @@
 import vue from '@vitejs/plugin-vue'
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [vue()],
@@ -8,6 +8,8 @@ export default defineConfig({
     proxy: { '/api': 'http://localhost:8000' },
   },
   test: {
+    // Los specs de `e2e/` son de Playwright y no corren bajo Vitest.
+    exclude: [...configDefaults.exclude, 'e2e/**'],
     environment: 'jsdom',
     setupFiles: ['src/__tests__/setup.ts'],
     coverage: {

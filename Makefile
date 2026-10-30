@@ -1,4 +1,4 @@
-.PHONY: dev lint test migrate docs api
+.PHONY: dev lint test e2e migrate docs api
 
 # Arranca backend y frontend. / Starts backend and frontend.
 dev:
@@ -12,6 +12,10 @@ lint:
 test:
 	cd backend && python manage.py compilemessages -v0 && pytest
 	cd frontend && npm test
+
+# Pruebas extremo a extremo (requiere `npx playwright install chromium`). / End-to-end tests (needs `npx playwright install chromium`).
+e2e:
+	cd frontend && npm run e2e
 
 migrate:
 	cd backend && python manage.py migrate
