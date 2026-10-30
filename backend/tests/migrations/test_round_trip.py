@@ -12,10 +12,10 @@ from pathlib import Path
 import pytest
 from django.apps import apps
 from django.conf import settings
+from django.core.management import call_command
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.db.migrations.recorder import MigrationRecorder
-from django_test_migrations.contrib.pytest_plugin import MigratorFactory
 
 # Solo las apps propias: las de terceros no las mantenemos nosotros.
 # Only our own apps: third-party apps are not maintained here.
@@ -42,17 +42,20 @@ def _applied_apps() -> set[str]:
 
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.parametrize("app_label", LOCAL_APPS)
-def test_ida_y_vuelta_de_cada_app(migrator_factory: MigratorFactory, app_label: str) -> None:
+def test_ida_y_vuelta_de_cada_app(app_label: str) -> None:
     """Revierte la app a cero, comprueba que se ha revertido y la vuelve a aplicar.
 
-    Reverts the app to zero, checks it was reverted, then applies it again.
-    """
-    migrator = migrator_factory()
-    migrator.reset()
+    Reverts the app to zero, checks it was reverted, then applies it again. Se usa el
+    comando ``migrate`` y no ``django_test_migrations.Migrator``: este último deja el
+    estado de los modelos históricos de ``simple_history`` desincronizado para el resto
+    de la suite.
 
-    migrator.apply_tested_migration((app_label, None))
+    Uses the ``migrate`` command rather than ``django_test_migrations.Migrator``, which
+    leaves the ``simple_history`` model state out of sync for the rest of the suite.
+    """
+    call_command("migrate", app_label, "zero", verbosity=0)
     assert app_label not in _applied_apps()
 
-    migrator.reset()
+    call_command("migrate", verbosity=0)
     assert _pending_migrations() == []
     assert app_label in _applied_apps()
