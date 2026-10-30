@@ -3,6 +3,7 @@
 from django.urls import URLPattern, URLResolver, path
 from rest_framework.routers import SimpleRouter
 
+from .upload import TrackUploadView
 from .views import (
     AlbumViewSet,
     ArtistViewSet,
@@ -21,5 +22,6 @@ router.register("blocked", BlockedItemViewSet, basename="blocked")
 urlpatterns: list[URLPattern | URLResolver] = [
     path("summary/", LibrarySummaryView.as_view(), name="library-summary"),
     path("deezer/artists/", DeezerArtistSearchView.as_view(), name="deezer-artist-search"),
+    path("tracks/<int:pk>/upload/", TrackUploadView.as_view(), name="track-upload"),
     *router.urls,
 ]

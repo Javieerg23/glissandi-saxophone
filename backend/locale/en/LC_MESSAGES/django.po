@@ -26,3 +26,9 @@ msgstr "That version does not exist."
 
 msgid "Deezer no responde."
 msgstr "Deezer is not responding."
+
+msgid "El fichero no es un audio válido o supera los 200 MB."
+msgstr "The file is not valid audio or is larger than 200 MB."
+
+msgid "No se pudo convertir el audio."
+msgstr "The audio could not be converted."

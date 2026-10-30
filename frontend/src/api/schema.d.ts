@@ -582,6 +582,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/catalog/tracks/{id}/upload/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Valida el fichero (tipo y tamaño), lo convierte al formato de los ajustes, lo etiqueta con los datos de la canción, lo guarda con la plantilla de nombres y registra la descarga sin URL de origen. / Validates, converts, tags and stores the file, and records a download with no source URL. */
+        post: operations["v1_catalog_tracks_upload_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/jobs/runs/": {
         parameters: {
             query?: never;
@@ -1431,6 +1448,14 @@ export interface components {
             track_number?: number;
             /** Format: int64 */
             disc_number?: number;
+        };
+        /** @description Fichero de audio subido. / Uploaded audio file. */
+        TrackUploadRequest: {
+            /**
+             * Format: binary
+             * @description mp3, m4a, flac, opus, ogg, wav; 200 MB max.
+             */
+            file: string;
         };
         /** @description Cambio de nombre de usuario. / Username change. */
         UsernameChangeRequest: {
@@ -2587,6 +2612,63 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_upload_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["TrackUploadRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
                 };
             };
         };

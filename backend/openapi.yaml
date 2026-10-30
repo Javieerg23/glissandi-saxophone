@@ -1424,6 +1424,71 @@ paths:
               schema:
                 $ref: '#/components/schemas/Track'
           description: ''
+  /api/v1/catalog/tracks/{id}/upload/:
+    post:
+      operationId: v1_catalog_tracks_upload_create
+      description: Valida el fichero (tipo y tamaño), lo convierte al formato de los
+        ajustes, lo etiqueta con los datos de la canción, lo guarda con la plantilla
+        de nombres y registra la descarga sin URL de origen. / Validates, converts,
+        tags and stores the file, and records a download with no source URL.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - catalog
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TrackUploadRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+              examples:
+                FicheroNoVálido:
+                  value:
+                    file:
+                    - El fichero no es un audio válido o supera los 200 MB.
+                  summary: Fichero no válido
+          description: ''
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+              examples:
+                FalloDeConversión:
+                  value:
+                    detail: No se pudo convertir el audio.
+                  summary: Fallo de conversión
+          description: ''
   /api/v1/jobs/runs/:
     get:
       operationId: v1_jobs_runs_list
@@ -3341,6 +3406,16 @@ components:
           format: int64
       required:
       - title
+    TrackUploadRequest:
+      type: object
+      description: Fichero de audio subido. / Uploaded audio file.
+      properties:
+        file:
+          type: string
+          format: binary
+          description: mp3, m4a, flac, opus, ogg, wav; 200 MB max.
+      required:
+      - file
     UsernameChangeRequest:
       type: object
       description: Cambio de nombre de usuario. / Username change.
