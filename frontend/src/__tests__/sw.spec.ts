@@ -38,7 +38,7 @@ describe('service worker', () => {
   beforeEach(() => (w = loadWorker()))
 
   it.each([
-    ['la API', 'https://app.test/api/v1/jobs/', 'GET'],
+    ['la API', 'https://app.test/api/v1/jobs/runs/', 'GET'],
     ['un POST', 'https://app.test/x', 'POST'],
     ['otro origen', 'https://otro.test/x', 'GET'],
   ])('no intercepta %s', (_n, url, method) => {

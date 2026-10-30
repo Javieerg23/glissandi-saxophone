@@ -1,0 +1,30 @@
+{
+  "account": {
+    "nav": "Account",
+    "title": "My account",
+    "signedInAs": "Signed in as {username} ({role}).",
+    "role": {
+      "administrador": "administrator",
+      "usuario": "user"
+    },
+    "language": {
+      "label": "Language",
+      "es": "Español",
+      "en": "English"
+    },
+    "username": {
+      "title": "Change username",
+      "new": "New username",
+      "submit": "Change username",
+      "done": "Username changed."
+    },
+    "password": {
+      "title": "Change password",
+      "current": "Current password",
+      "new": "New password",
+      "submit": "Change password",
+      "done": "Password changed."
+    },
+    "logout": "Sign out"
+  }
+}

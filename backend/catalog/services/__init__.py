@@ -1,1 +1,1 @@
-"""Servicios de ``catalog``. / ``catalog`` services."""
+"""Servicios del catálogo. / Catalogue services."""
