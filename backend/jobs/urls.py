@@ -1,5 +1,10 @@
 """Rutas de la app ``jobs``. / ``jobs`` app URLs."""
 
-from django.urls import URLPattern
+from rest_framework.routers import DefaultRouter
 
-urlpatterns: list[URLPattern] = []
+from .views import JobRunViewSet
+
+router = DefaultRouter()
+router.register("runs", JobRunViewSet, basename="run")
+
+urlpatterns = router.urls
