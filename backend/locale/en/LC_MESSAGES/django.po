@@ -26,3 +26,23 @@ msgstr "That version does not exist."
 
 msgid "Deezer no responde."
 msgstr "Deezer is not responding."
+
+msgid "El fichero no es JSON válido."
+msgstr "The file is not valid JSON."
+
+msgid "El fichero no es una copia de la biblioteca."
+msgstr "The file is not a library backup."
+
+#, python-format
+msgid "La copia tiene datos no válidos: %(error)s"
+msgstr "The backup holds invalid data: %(error)s"
+
+msgid "Fichero de copia desconocido."
+msgstr "Unknown backup file."
+
+msgid "Solo un administrador puede importar la biblioteca."
+msgstr "Only an administrator can restore the library."
+
+#, python-format
+msgid "%(created)d elementos añadidos, %(skipped)d ya existían."
+msgstr "%(created)d items added, %(skipped)d already existed."
