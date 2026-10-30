@@ -4,9 +4,11 @@ import pytest
 from django.contrib import admin
 from django.db.models import ProtectedError
 from django.test import RequestFactory
+from django.utils import timezone
 
+from catalog.factories import ArtistFactory
 from core.models import AppendOnlyError
-from watches.models import Watch, WatchRun
+from watches.models import Watch, WatchArtist, WatchRun
 
 pytestmark = pytest.mark.django_db
 
@@ -68,3 +70,17 @@ def test_watch_run_admin_is_read_only() -> None:
     assert model_admin.has_add_permission(request) is False
     assert model_admin.has_change_permission(request) is False
     assert model_admin.has_delete_permission(request) is False
+
+
+def test_watch_artist_is_unique_per_watch() -> None:
+    watch, artist = Watch.objects.create(name="novedades"), ArtistFactory.create()
+    WatchArtist.objects.create(watch=watch, artist=artist)
+    assert str(WatchArtist.objects.get()) == f"novedades / {artist}"
+    with pytest.raises(Exception, match="UNIQUE|unique"):
+        WatchArtist.objects.create(watch=watch, artist=artist)
+
+
+def test_new_watch_is_due_and_checked_daily_by_default() -> None:
+    watch = Watch.objects.create(name="novedades")
+    assert (watch.interval_hours, watch.auto_download) == (24, False)
+    assert watch.next_run_at <= timezone.now()
