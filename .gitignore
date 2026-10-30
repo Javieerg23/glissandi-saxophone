@@ -31,3 +31,8 @@ music/
 
 # Secretos: solo se sube .env.example
 .env
+
+# Mutación y cobertura generadas
+mutants/
+.stryker-tmp/
+coverage.xml

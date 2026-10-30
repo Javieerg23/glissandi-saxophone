@@ -10,9 +10,11 @@ from .base import *  # noqa: E402, F403
 # Fast hashing: password strength is not what these tests exercise.
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
-# App con modelos de prueba (p. ej. para ``AppendOnlyModel``); sin migraciones.
-# App hosting test models (e.g. for ``AppendOnlyModel``); it has no migrations.
-INSTALLED_APPS = [*INSTALLED_APPS, "tests.testapp"]  # noqa: F405
+# App con modelos de prueba (p. ej. para ``AppendOnlyModel``; sin migraciones) y el comando
+# ``lintmigrations`` que usa la CI.
+# App hosting test models (e.g. for ``AppendOnlyModel``; no migrations) and the
+# ``lintmigrations`` command the CI runs.
+INSTALLED_APPS = [*INSTALLED_APPS, "tests.testapp", "django_migration_linter"]  # noqa: F405
 
 # El cliente de test habla HTTP; las cookies conservan su indicador Secure para comprobarlo.
 # The test client speaks HTTP; cookies keep their Secure flag so it can be asserted.

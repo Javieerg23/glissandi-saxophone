@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  # Semanal: aparecen CVE nuevos sin que cambie el código.
+  # Weekly: new CVEs show up without any code change.
+  schedule:
+    - cron: "0 5 * * 1"
 
 permissions:
   contents: read
@@ -31,6 +35,10 @@ jobs:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
+        with:
+          # diff-cover necesita el historial para comparar con la rama base.
+          # diff-cover needs history to compare against the base branch.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -40,6 +48,8 @@ jobs:
       - run: ruff check .
       - run: ruff format --check .
       - run: mypy .
+      - run: interrogate .
+      - run: pip-audit -r requirements.txt
       - run: python manage.py makemigrations --check --dry-run
         env:
           DJANGO_SETTINGS_MODULE: config.settings.test
@@ -48,7 +58,29 @@ jobs:
       - run: sudo apt-get install -y --no-install-recommends gettext ffmpeg
         working-directory: .
       - run: python manage.py compilemessages -v0
-      - run: pytest
+      # Solo las comprobaciones de seguridad: las de drf-spectacular se resuelven con el esquema OpenAPI.
+      # Security checks only: the drf-spectacular ones are fixed with the OpenAPI schema work.
+      - run: python manage.py check --deploy --tag security --fail-level WARNING
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.base
+          DJANGO_SECRET_KEY: ${{ github.sha }}${{ github.sha }}${{ github.sha }}
+          DJANGO_ALLOWED_HOSTS: example.com
+      # El linter registra en la base de datos, así que necesita el esquema aplicado.
+      # The linter logs to the database, so it needs the schema applied.
+      - run: python manage.py migrate -v0
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.test
+      # Las migraciones iniciales crean tablas vacías; las de terceros no son nuestras.
+      # Initial migrations create empty tables; third-party ones are not ours.
+      - run: >-
+          python manage.py lintmigrations --ignore-initial-migrations
+          --exclude-apps axes django_db_logger simple_history
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.test
+      - run: pytest --cov-report=xml
+      - name: Cobertura del código nuevo / Coverage of new code
+        if: github.event_name == 'pull_request'
+        run: diff-cover coverage.xml --compare-branch=origin/${{ github.base_ref }} --fail-under=100
 
   frontend:
     runs-on: ubuntu-latest
@@ -63,6 +95,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - run: npm audit --audit-level=high
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test

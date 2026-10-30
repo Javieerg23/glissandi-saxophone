@@ -70,3 +70,24 @@ disable_error_code = ["no-untyped-call", "attr-defined", "assignment", "arg-type
 # mutagen's constructors are not type-annotated.
 module = ["integrations.audio.*", "tests.integrations.audio.*"]
 disallow_untyped_calls = false
+
+[tool.interrogate]
+# Las migraciones son generadas; los tests se rigen por su propio nombre.
+# Migrations are generated; tests are named for what they check.
+exclude = ["tests", "*/migrations", "manage.py"]
+ignore-init-module = true
+fail-under = 95
+
+[tool.mutmut]
+# Solo lógica propia con tests unitarios; migraciones, admin y ajustes no tienen qué mutar.
+# Own logic with unit tests only; migrations, admin and settings have nothing to mutate.
+source_paths = ["core/", "integrations/", "activity/", "accounts/"]
+do_not_mutate = ["*/migrations/*", "*/admin.py", "*/apps.py", "*/urls.py"]
+also_copy = ["config/", "catalog/", "watches/", "proxies/", "preferences/", "jobs/", "locale/", "manage.py", "pyproject.toml"]
+pytest_add_cli_args = ["-o", "addopts=", "-p", "no:cacheprovider"]
+pytest_add_cli_args_test_selection = ["tests/"]
+
+[tool.coverage.report]
+# Suelo global; el código nuevo se exige al 100 % con diff-cover en la CI.
+# Global floor; new code is held to 100 % by diff-cover in CI.
+fail_under = 90
