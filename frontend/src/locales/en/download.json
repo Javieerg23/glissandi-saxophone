@@ -1,0 +1,22 @@
+{
+  "download": {
+    "nav": "Download",
+    "title": "Download",
+    "pending": "{count} pending tracks",
+    "columns": {
+      "title": "Track",
+      "artists": "Artists"
+    },
+    "filters": {
+      "artist": "Artist",
+      "album": "Album",
+      "all": "All"
+    },
+    "page": "Page {page}",
+    "previous": "Previous",
+    "next": "Next",
+    "chosen": "Download selected ({count})",
+    "all": "Download all pending",
+    "running": "A download is already running; you can follow it here."
+  }
+}
