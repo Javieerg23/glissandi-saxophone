@@ -162,3 +162,20 @@ class DeezerClient:
         Track detail, with ISRC and contributors.
         """
         return parse_track(self._get(f"track/{track_id}"))
+
+    def get_track_by_isrc(self, isrc: str) -> Track:
+        """Canción con ese ISRC. / Track carrying that ISRC.
+
+        Raises:
+            DeezerError: Si Deezer no conoce el ISRC. / If Deezer does not know the ISRC.
+        """
+        return parse_track(self._get(f"track/isrc:{isrc}"))
+
+    def search_tracks(self, query: str, index: int = 0, limit: int = 25) -> Page[Track]:
+        """Busca canciones; admite la sintaxis avanzada (``artist:"…" track:"…"``).
+
+        Searches tracks; accepts the advanced syntax (``artist:"…" track:"…"``).
+        Results lack the ISRC, which :meth:`get_track` gives.
+        """
+        data, page = self._page("search/track", index, limit, q=query)
+        return Page(tuple(parse_track(t) for t in data), page.total, page.next_index)
