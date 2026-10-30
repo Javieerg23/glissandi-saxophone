@@ -1,22 +1,34 @@
 """Modelos de la app ``watches``. / ``watches`` app models."""
 
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from simple_history.models import HistoricalRecords
 
+from catalog.models import Artist
 from core.models import AppendOnlyModel
 
 
 class Watch(models.Model):
-    """Vigilancia de novedades: nombre y si está activa.
+    """Vigilancia de novedades: artistas, cada cuánto se comprueba y qué hacer.
 
-    New-release watch: its name and whether it is active. Editable, so every
-    change is kept in the history table.
+    New-release watch: its artists, how often it is checked and what to do with
+    what is found. Editable, so every change is kept in the history table.
     """
 
     name = models.CharField(_("nombre"), max_length=120, unique=True)
     enabled = models.BooleanField(_("activa"), default=True)
+    interval_hours = models.PositiveSmallIntegerField(
+        _("intervalo (horas)"), default=24, validators=[MinValueValidator(1)]
+    )
+    auto_download = models.BooleanField(_("descarga automática"), default=False)
+    # Por defecto «ya»: una vigilancia nueva se comprueba en la siguiente pasada.
+    # Defaults to "now": a new watch is checked on the next scheduler pass.
+    next_run_at = models.DateTimeField(_("próxima ejecución"), default=timezone.now, db_index=True)
+    artists = models.ManyToManyField(
+        Artist, through="WatchArtist", related_name="watches", verbose_name=_("artistas")
+    )
     created_at = models.DateTimeField(_("creada"), auto_now_add=True)
     updated_at = models.DateTimeField(_("actualizada"), auto_now=True)
 
@@ -30,6 +42,29 @@ class Watch(models.Model):
     def __str__(self) -> str:
         """Devuelve el nombre. / Returns the name."""
         return self.name
+
+
+class WatchArtist(models.Model):
+    """Artista vigilado con su posición en la lista de la vigilancia.
+
+    Artist under watch with its position in the watch's list.
+    """
+
+    watch = models.ForeignKey(Watch, on_delete=models.CASCADE, related_name="watch_artists")
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name="watch_entries")
+    position = models.PositiveSmallIntegerField(_("posición"), default=0)
+
+    class Meta:
+        """Un artista figura una vez por vigilancia. / An artist appears once per watch."""
+
+        ordering = ["watch", "position"]
+        constraints = [
+            models.UniqueConstraint(fields=["watch", "artist"], name="unique_watch_artist")
+        ]
+
+    def __str__(self) -> str:
+        """Vigilancia y artista. / Watch and artist."""
+        return f"{self.watch} / {self.artist}"
 
 
 class WatchRun(AppendOnlyModel):
