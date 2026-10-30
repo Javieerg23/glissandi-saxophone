@@ -1,0 +1,24 @@
+{
+  "dashboard": {
+    "nav": "Panel",
+    "title": "Panel",
+    "library": "Biblioteca",
+    "summary": {
+      "artists": "Artistas",
+      "albums": "Álbumes",
+      "tracks": "Canciones",
+      "downloaded": "Descargadas"
+    },
+    "jobs": {
+      "title": "Tareas en curso",
+      "empty": "No hay tareas en curso.",
+      "progress": "Progreso de {kind}",
+      "kind": {
+        "import": "Importación",
+        "download": "Descarga",
+        "watch_check": "Comprobación de novedades",
+        "maintenance": "Utilidades"
+      }
+    }
+  }
+}
