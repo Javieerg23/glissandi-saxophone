@@ -23,5 +23,7 @@ def test_initial_migration_is_reversible() -> None:
     executor.migrate([("catalog", None)])
     assert "catalog_track" not in connection.introspection.table_names()
     executor = MigrationExecutor(connection)
-    executor.migrate(executor.loader.graph.leaf_nodes("catalog"))
+    # Reverting catalog also reverts the apps that depend on it (watches, among others), so
+    # every app has to be reapplied, or they stay half-migrated for the rest of the suite.
+    executor.migrate(executor.loader.graph.leaf_nodes())
     assert "catalog_track" in connection.introspection.table_names()
