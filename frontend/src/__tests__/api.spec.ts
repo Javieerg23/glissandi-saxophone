@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 
 import { ApiError, api } from '../api/client'
 import { server } from '../mocks/server'
-import { useJobsStore } from '../stores/jobs'
+import { progressOf, useJobsStore } from '../stores/jobs'
 import { useSessionStore } from '../stores/session'
 
 describe('api()', () => {
@@ -102,5 +102,11 @@ describe('stores', () => {
     await j.refresh()
     expect(j.jobs).toHaveLength(2)
     expect(j.active.map((x) => x.id)).toEqual([1])
+  })
+
+  it('jobs: porcentaje de progreso, 0 mientras no hay total', () => {
+    const base = { id: 1, kind: 'import', status: 'running', current: '' } as const
+    expect(progressOf({ ...base, done: 1, total: 3 })).toBe(33)
+    expect(progressOf({ ...base, done: 0, total: 0 })).toBe(0)
   })
 })
