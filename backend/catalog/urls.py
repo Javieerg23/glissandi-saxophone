@@ -8,6 +8,7 @@ from .views import (
     ArtistViewSet,
     BlockedItemViewSet,
     DeezerArtistSearchView,
+    LibrarySummaryView,
     TrackViewSet,
 )
 
@@ -18,6 +19,7 @@ router.register("tracks", TrackViewSet, basename="track")
 router.register("blocked", BlockedItemViewSet, basename="blocked")
 
 urlpatterns: list[URLPattern | URLResolver] = [
+    path("summary/", LibrarySummaryView.as_view(), name="library-summary"),
     path("deezer/artists/", DeezerArtistSearchView.as_view(), name="deezer-artist-search"),
     *router.urls,
 ]

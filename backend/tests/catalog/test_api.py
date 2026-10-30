@@ -53,7 +53,9 @@ def _ids(response: Any) -> list[int]:
 # --- Permisos / Permissions ---
 
 
-@pytest.mark.parametrize("path", ["artists", "albums", "tracks", "blocked", "deezer/artists"])
+@pytest.mark.parametrize(
+    "path", ["artists", "albums", "tracks", "blocked", "deezer/artists", "summary"]
+)
 def test_anonymous_cannot_read(path: str) -> None:
     assert APIClient().get(f"{BASE}/{path}/").status_code in (401, 403)
 
@@ -248,3 +250,12 @@ def test_deezer_failure_is_502(user: APIClient) -> None:
     responses.get(DEEZER, json={"error": {"type": "Exception", "message": "boom"}})
     assert user.get(f"{BASE}/deezer/artists/?q=a").status_code == 502
     assert Artist.objects.count() == 0 and Album.objects.count() == 0 and Track.objects.count() == 0
+
+
+def test_summary_counts_tracks_not_downloads(user: APIClient) -> None:
+    track = TrackFactory()
+    TrackFactory()
+    DownloadFactory(track=track)
+    DownloadFactory(track=track)
+    body = user.get(f"{BASE}/summary/").data
+    assert body == {"artists": 4, "albums": 2, "tracks": 2, "downloaded": 1}

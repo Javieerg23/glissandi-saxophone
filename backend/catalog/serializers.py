@@ -157,3 +157,12 @@ class DeezerSearchSerializer(serializers.Serializer[Any]):
     results = DeezerArtistSerializer(many=True)
     total = serializers.IntegerField()
     next_index = serializers.IntegerField(allow_null=True)
+
+
+class LibrarySummarySerializer(serializers.Serializer[Any]):
+    """Recuentos de la biblioteca. / Library counts."""
+
+    artists = serializers.IntegerField()
+    albums = serializers.IntegerField()
+    tracks = serializers.IntegerField()
+    downloaded = serializers.IntegerField(help_text="Canciones con alguna descarga.")

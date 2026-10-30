@@ -34,7 +34,7 @@ from core.serializers import DetailSerializer
 from integrations.deezer import DeezerClient, DeezerError
 
 from .filters import AlbumFilter, ArtistFilter, TrackFilter
-from .models import Album, Artist, BlockedItem, Track
+from .models import Album, Artist, BlockedItem, Download, Track
 from .serializers import (
     AlbumSerializer,
     ArtistIdsSerializer,
@@ -43,6 +43,7 @@ from .serializers import (
     DeezerSearchQuerySerializer,
     DeezerSearchSerializer,
     HistoryEntrySerializer,
+    LibrarySummarySerializer,
     RevertSerializer,
     TrackSerializer,
 )
@@ -298,3 +299,23 @@ class DeezerArtistSearchView(APIView):
             for a in page.items
         ]
         return Response({"results": results, "total": page.total, "next_index": page.next_index})
+
+
+class LibrarySummaryView(APIView):
+    """Recuentos para el panel. / Counts for the dashboard."""
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(responses=LibrarySummarySerializer, tags=["catalog"])
+    def get(self, request: Request) -> Response:
+        """Artistas, álbumes, canciones y canciones descargadas. / Library counts."""
+        return Response(
+            {
+                "artists": Artist.objects.count(),
+                "albums": Album.objects.count(),
+                "tracks": Track.objects.count(),
+                # Canciones, no descargas: una canción puede descargarse más de una vez.
+                # Tracks, not downloads: a track may be downloaded more than once.
+                "downloaded": Download.objects.values("track").distinct().count(),
+            }
+        )

@@ -349,6 +349,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/catalog/summary/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Artistas, álbumes, canciones y canciones descargadas. / Library counts. */
+        get: operations["v1_catalog_summary_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/catalog/tracks/": {
         parameters: {
             query?: never;
@@ -556,6 +573,14 @@ export interface components {
          * @enum {string}
          */
         KindEnum: "artist" | "album" | "track";
+        /** @description Recuentos de la biblioteca. / Library counts. */
+        LibrarySummary: {
+            artists: number;
+            albums: number;
+            tracks: number;
+            /** @description Canciones con alguna descarga. */
+            downloaded: number;
+        };
         /**
          * @description Alta de la primera cuenta; valida usuario y contraseña con las reglas de Django.
          *
@@ -1395,6 +1420,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_catalog_summary_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibrarySummary"];
                 };
             };
         };
