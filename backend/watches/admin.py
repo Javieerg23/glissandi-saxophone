@@ -6,14 +6,22 @@ from django.contrib import admin
 from django.http import HttpRequest
 from simple_history.admin import SimpleHistoryAdmin
 
-from .models import Watch, WatchRun
+from .models import Watch, WatchArtist, WatchRun
+
+
+class WatchArtistInline(admin.TabularInline):  # type: ignore[type-arg]
+    """Artistas de la vigilancia. / The watch's artists."""
+
+    model = WatchArtist
+    extra = 0
 
 
 @admin.register(Watch)
 class WatchAdmin(SimpleHistoryAdmin):  # type: ignore[misc]
     """Vigilancias editables con historial. / Editable watches with history."""
 
-    list_display = ("name", "enabled", "updated_at")
+    inlines = [WatchArtistInline]
+    list_display = ("name", "enabled", "interval_hours", "next_run_at")
     search_fields = ("name",)
 
 

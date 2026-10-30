@@ -66,7 +66,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** @description Devuelve usuario y rol. / Returns username and role. */
+        /**
+         * @description Devuelve usuario, rol e intentos fallidos desde el último inicio de sesión.
+         *
+         *     Returns username, role and failed attempts since the last successful sign-in.
+         */
         get: operations["v1_accounts_me_retrieve"];
         put?: never;
         post?: never;
@@ -128,14 +132,804 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/accounts/users/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Lista todos los usuarios. / Lists every user. */
+        get: operations["v1_accounts_users_list"];
+        put?: never;
+        /** @description Crea un usuario con su rol. / Creates a user with a role. */
+        post: operations["v1_accounts_users_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/users/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * @description Cambia el rol o desactiva a un usuario. / Changes a user's role or deactivates them.
+         *
+         *     Nadie se quita a sí mismo el rol de administrador ni se desactiva, así
+         *     siempre queda un administrador con sesión.
+         *     Nobody can demote or deactivate themselves, so an administrator always remains.
+         */
+        patch: operations["v1_accounts_users_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/activity/entries/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Historial de actividad. Solo lectura: nadie borra ni modifica registros.
+         *
+         *     Activity history. Read only: nobody deletes or edits records.
+         */
+        get: operations["v1_activity_entries_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activity/entries/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Historial de actividad. Solo lectura: nadie borra ni modifica registros.
+         *
+         *     Activity history. Read only: nobody deletes or edits records.
+         */
+        get: operations["v1_activity_entries_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activity/logs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Logs técnicos de la base de datos, solo para administradores.
+         *
+         *     Technical logs stored in the database, administrators only.
+         */
+        get: operations["v1_activity_logs_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/activity/logs/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Logs técnicos de la base de datos, solo para administradores.
+         *
+         *     Technical logs stored in the database, administrators only.
+         */
+        get: operations["v1_activity_logs_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/albums/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Álbumes del catálogo. / Catalogue albums. */
+        get: operations["v1_catalog_albums_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/albums/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Álbumes del catálogo. / Catalogue albums. */
+        get: operations["v1_catalog_albums_retrieve"];
+        /** @description Álbumes del catálogo. / Catalogue albums. */
+        put: operations["v1_catalog_albums_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Álbumes del catálogo. / Catalogue albums. */
+        patch: operations["v1_catalog_albums_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/catalog/albums/{id}/artists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** @description Reemplaza los artistas, en el orden recibido. / Replaces the artists in order. */
+        put: operations["v1_catalog_albums_artists_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/albums/{id}/history/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Versiones del elemento, la más reciente primero. / Item versions, newest first. */
+        get: operations["v1_catalog_albums_history_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/albums/{id}/revert/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Devuelve los campos editables a los de una versión. / Restores a version. */
+        post: operations["v1_catalog_albums_revert_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/artists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Artistas del catálogo. / Catalogue artists. */
+        get: operations["v1_catalog_artists_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/artists/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Artistas del catálogo. / Catalogue artists. */
+        get: operations["v1_catalog_artists_retrieve"];
+        /** @description Artistas del catálogo. / Catalogue artists. */
+        put: operations["v1_catalog_artists_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Artistas del catálogo. / Catalogue artists. */
+        patch: operations["v1_catalog_artists_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/catalog/artists/{id}/history/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Versiones del elemento, la más reciente primero. / Item versions, newest first. */
+        get: operations["v1_catalog_artists_history_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/artists/{id}/revert/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Devuelve los campos editables a los de una versión. / Restores a version. */
+        post: operations["v1_catalog_artists_revert_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/blocked/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Lista de bloqueados: bloquear es crear y desbloquear es borrar.
+         *
+         *     Blocked list: blocking is creating and unblocking is deleting.
+         */
+        get: operations["v1_catalog_blocked_list"];
+        put?: never;
+        /**
+         * @description Lista de bloqueados: bloquear es crear y desbloquear es borrar.
+         *
+         *     Blocked list: blocking is creating and unblocking is deleting.
+         */
+        post: operations["v1_catalog_blocked_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/blocked/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * @description Lista de bloqueados: bloquear es crear y desbloquear es borrar.
+         *
+         *     Blocked list: blocking is creating and unblocking is deleting.
+         */
+        delete: operations["v1_catalog_blocked_destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/deezer/artists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Resultados con marca de los que ya están o están bloqueados. / Annotated results. */
+        get: operations["v1_catalog_deezer_artists_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/summary/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Artistas, álbumes, canciones y canciones descargadas. / Library counts. */
+        get: operations["v1_catalog_summary_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Canciones del catálogo. / Catalogue tracks. */
+        get: operations["v1_catalog_tracks_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Canciones del catálogo. / Catalogue tracks. */
+        get: operations["v1_catalog_tracks_retrieve"];
+        /** @description Canciones del catálogo. / Catalogue tracks. */
+        put: operations["v1_catalog_tracks_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Canciones del catálogo. / Catalogue tracks. */
+        patch: operations["v1_catalog_tracks_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/{id}/artists/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** @description Reemplaza los artistas, en el orden recibido. / Replaces the artists in order. */
+        put: operations["v1_catalog_tracks_artists_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/{id}/history/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Versiones del elemento, la más reciente primero. / Item versions, newest first. */
+        get: operations["v1_catalog_tracks_history_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/tracks/{id}/revert/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Devuelve los campos editables a los de una versión. / Restores a version. */
+        post: operations["v1_catalog_tracks_revert_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/runs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Lanza, consulta y detiene tareas en segundo plano.
+         *
+         *     Starts, inspects and stops background tasks. Runs are never edited or
+         *     deleted through the API: the engine owns them.
+         */
+        get: operations["v1_jobs_runs_list"];
+        put?: never;
+        /**
+         * @description Lanza una tarea; 409 si ya hay otra activa del mismo tipo.
+         *
+         *     Starts a task; 409 if one of the same kind is already active.
+         */
+        post: operations["v1_jobs_runs_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/runs/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Lanza, consulta y detiene tareas en segundo plano.
+         *
+         *     Starts, inspects and stops background tasks. Runs are never edited or
+         *     deleted through the API: the engine owns them.
+         */
+        get: operations["v1_jobs_runs_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/runs/{id}/lines/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Líneas de registro posteriores a ``after`` (por defecto, desde el principio).
+         *
+         *     Log lines after position ``after`` (default: from the start).
+         */
+        get: operations["v1_jobs_runs_lines_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/jobs/runs/{id}/stop/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Pide detener la tarea; 409 si ya terminó. / Asks to stop; 409 if already closed. */
+        post: operations["v1_jobs_runs_stop_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/preferences/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Lista todos los ajustes con su valor y su valor por defecto.
+         *
+         *     Lists every setting with its value and its default.
+         */
+        get: operations["v1_preferences_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/preferences/{key}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Devuelve un ajuste. / Returns one setting. */
+        get: operations["v1_preferences_retrieve"];
+        /** @description Cambia el valor de un ajuste y lo registra. / Changes a setting and logs it. */
+        put: operations["v1_preferences_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/proxies/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        get: operations["v1_proxies_list"];
+        put?: never;
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        post: operations["v1_proxies_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/proxies/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        get: operations["v1_proxies_retrieve"];
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        put: operations["v1_proxies_update"];
+        post?: never;
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        delete: operations["v1_proxies_destroy"];
+        options?: never;
+        head?: never;
+        /** @description CRUD de proxies y prueba de conexión. / Proxy CRUD and connection test. */
+        patch: operations["v1_proxies_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/proxies/{id}/check/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * @description Comprueba que el proxy da salida al tráfico. / Checks that the proxy relays traffic.
+         *
+         *     Un código 2xx o 3xx cuenta como correcto.
+         *     A 2xx or 3xx status counts as success.
+         */
+        post: operations["v1_proxies_check_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/watches/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        get: operations["v1_watches_list"];
+        put?: never;
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        post: operations["v1_watches_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/watches/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        get: operations["v1_watches_retrieve"];
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        put: operations["v1_watches_update"];
+        post?: never;
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        delete: operations["v1_watches_destroy"];
+        options?: never;
+        head?: never;
+        /** @description CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history. */
+        patch: operations["v1_watches_partial_update"];
+        trace?: never;
+    };
+    "/api/v1/watches/{id}/runs/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * @description Historial de comprobaciones, de la más reciente a la más antigua.
+         *
+         *     Check history, newest first.
+         */
+        get: operations["v1_watches_runs_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description Una entrada del historial de actividad. / One activity history entry. */
+        ActivityLog: {
+            readonly id: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly user: number | null;
+            readonly username: string;
+            readonly action: string;
+            /** @description Devuelve ``app.modelo`` del objeto afectado. / Returns ``app.model`` of the target. */
+            readonly object_type: string;
+            readonly object_id: string;
+            readonly detail: unknown;
+        };
+        /** @description Álbum con sus artistas; título, fecha y portada son editables. / Album with artists. */
+        Album: {
+            readonly id: number;
+            title: string;
+            /** Format: date */
+            release_date?: string | null;
+            cover_url?: string;
+            readonly artists: components["schemas"]["Credit"][];
+            readonly deezer_id: number | null;
+            /** Format: uuid */
+            readonly musicbrainz_id: string | null;
+        };
+        /** @description Álbum con sus artistas; título, fecha y portada son editables. / Album with artists. */
+        AlbumRequest: {
+            title: string;
+            /** Format: date */
+            release_date?: string | null;
+            cover_url?: string;
+        };
+        /** @description Artista; nombre e imagen son editables. / Artist; name and image are editable. */
+        Artist: {
+            readonly id: number;
+            name: string;
+            image_url?: string;
+            readonly deezer_id: number | null;
+            /** Format: uuid */
+            readonly musicbrainz_id: string | null;
+        };
+        /** @description Lista ordenada de artistas; el primero es el principal. / Ordered artist list. */
+        ArtistIdsRequest: {
+            artists: number[];
+        };
+        /** @description Artista; nombre e imagen son editables. / Artist; name and image are editable. */
+        ArtistRequest: {
+            name: string;
+            image_url?: string;
+        };
+        /** @description Elemento bloqueado; un bloqueo por tipo e identificador. / Blocked item. */
+        BlockedItem: {
+            readonly id: number;
+            kind: components["schemas"]["KindEnum"];
+            /** Format: int64 */
+            deezer_id: number;
+            name?: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /** @description Elemento bloqueado; un bloqueo por tipo e identificador. / Blocked item. */
+        BlockedItemRequest: {
+            kind: components["schemas"]["KindEnum"];
+            /** Format: int64 */
+            deezer_id: number;
+            name?: string;
+        };
         /** @description Usuario y contraseña de entrada. / Username and password input. */
         CredentialsRequest: {
             username: string;
             password: string;
+        };
+        /** @description Artista de un crédito, en orden. / Artist of a credit, in order. */
+        Credit: {
+            id: number;
+            name: string;
+            position: number;
+        };
+        /** @description Artista de un crédito, en orden. / Artist of a credit, in order. */
+        CreditRequest: {
+            id: number;
+            name: string;
+            position: number;
+        };
+        /** @description Artista encontrado en Deezer. / Artist found on Deezer. */
+        DeezerArtist: {
+            deezer_id: number;
+            name: string;
+            image_url: string | null;
+            album_count: number | null;
+            fan_count: number | null;
+            in_catalog: boolean;
+            blocked: boolean;
+        };
+        /** @description Página de resultados de Deezer. / Page of Deezer results. */
+        DeezerSearch: {
+            results: components["schemas"]["DeezerArtist"][];
+            total: number;
+            next_index: number | null;
         };
         /** @description Cuerpo de error con un mensaje legible. / Error body with a readable message. */
         Detail: {
@@ -146,6 +940,150 @@ export interface components {
             status: string;
             message: string;
         };
+        /** @description Versión anterior de un elemento. / Past version of an item. */
+        HistoryEntry: {
+            history_id: number;
+            /** Format: date-time */
+            history_date: string;
+            /** @description + creado, ~ modificado, - borrado. */
+            history_type: string;
+            history_user: string | null;
+            /** @description Valores de los campos editables. */
+            changes: {
+                [key: string]: unknown;
+            };
+        };
+        /**
+         * @description Estado y progreso de una ejecución, solo lectura.
+         *
+         *     State and progress of a run, read only.
+         */
+        JobRun: {
+            readonly id: number;
+            /** Tipo */
+            readonly kind: string;
+            /** Parámetros */
+            readonly params: unknown;
+            readonly user: string;
+            /** Estado */
+            readonly status: components["schemas"]["JobRunStatusEnum"];
+            /**
+             * Inicio
+             * Format: date-time
+             */
+            readonly started_at: string;
+            /**
+             * Fin
+             * Format: date-time
+             */
+            readonly finished_at: string | null;
+            /** Hechas */
+            readonly done: number;
+            readonly total: number;
+            /** Elemento actual */
+            readonly current: string;
+            /** Resumen */
+            readonly summary: unknown;
+        };
+        /** @description Línea del registro de una ejecución. / One log line of a run. */
+        JobRunLine: {
+            /** Posición */
+            readonly position: number;
+            /** Nivel */
+            readonly level: components["schemas"]["JobRunLineLevelEnum"];
+            /** Mensaje */
+            readonly message: string;
+            /**
+             * Fecha
+             * Format: date-time
+             */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `info` - información
+         *     * `warning` - aviso
+         *     * `error` - error
+         * @enum {string}
+         */
+        JobRunLineLevelEnum: "info" | "warning" | "error";
+        /**
+         * @description * `pending` - pendiente
+         *     * `running` - en curso
+         *     * `stopping` - deteniéndose
+         *     * `stopped` - detenida
+         *     * `succeeded` - correcta
+         *     * `failed` - fallida
+         *     * `interrupted` - interrumpida
+         * @enum {string}
+         */
+        JobRunStatusEnum: "pending" | "running" | "stopping" | "stopped" | "succeeded" | "failed" | "interrupted";
+        /** @description Petición para lanzar una tarea. / Request to start a task. */
+        JobStartRequest: {
+            /** @description Tipo registrado. / Registered kind. */
+            kind: string;
+            /** @description Parámetros JSON. / JSON params. */
+            params?: {
+                [key: string]: unknown;
+            };
+        };
+        /**
+         * @description * `artist` - Artista
+         *     * `album` - Álbum
+         *     * `track` - Canción
+         * @enum {string}
+         */
+        KindEnum: "artist" | "album" | "track";
+        /** @description Recuentos de la biblioteca. / Library counts. */
+        LibrarySummary: {
+            artists: number;
+            albums: number;
+            tracks: number;
+            /** @description Canciones con alguna descarga. */
+            downloaded: number;
+        };
+        /** @description Usuario tal como lo gestiona un administrador. / User as an administrator manages it. */
+        ManagedUser: {
+            readonly id: number;
+            /**
+             * Nombre de usuario
+             * @description Requerido. 150 carácteres como máximo. Únicamente letras, dígitos y @/./+/-/_
+             */
+            username: string;
+            /** @description Devuelve el rol del usuario. / Returns the user's role. */
+            readonly role: string;
+            /**
+             * Activo
+             * @description Indica si el usuario debe ser tratado como activo. Desmarque esta opción en lugar de borrar la cuenta.
+             */
+            is_active?: boolean;
+            /**
+             * Último inicio de sesión
+             * Format: date-time
+             */
+            readonly last_login: string | null;
+            /**
+             * Fecha de alta
+             * Format: date-time
+             */
+            readonly date_joined: string;
+        };
+        /** @description Alta de un usuario con rol por un administrador. / Administrator-made account with a role. */
+        ManagedUserCreateRequest: {
+            username: string;
+            password: string;
+            /** @default usuario */
+            role: components["schemas"]["RoleEnum"];
+        };
+        /**
+         * @description Perfil con los intentos fallidos desde el último inicio de sesión.
+         *
+         *     Profile with the failed attempts since the last successful sign-in.
+         */
+        Me: {
+            username: string;
+            role: components["schemas"]["RoleEnum"];
+            failed_attempts: number;
+        };
         /**
          * @description Alta de la primera cuenta; valida usuario y contraseña con las reglas de Django.
          *
@@ -155,15 +1093,288 @@ export interface components {
             username: string;
             password: string;
         };
+        PaginatedActivityLogList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["ActivityLog"][];
+        };
+        PaginatedAlbumList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Album"][];
+        };
+        PaginatedArtistList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Artist"][];
+        };
+        PaginatedBlockedItemList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["BlockedItem"][];
+        };
+        PaginatedHistoryEntryList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["HistoryEntry"][];
+        };
+        PaginatedJobRunLineList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["JobRunLine"][];
+        };
+        PaginatedJobRunList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["JobRun"][];
+        };
+        PaginatedTechnicalLogList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["TechnicalLog"][];
+        };
+        PaginatedTrackList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Track"][];
+        };
+        PaginatedWatchList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Watch"][];
+        };
+        PaginatedWatchRunList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["WatchRun"][];
+        };
         /** @description Cambio de contraseña. / Password change. */
         PasswordChangeRequest: {
             current_password: string;
             new_password: string;
         };
+        /** @description Álbum con sus artistas; título, fecha y portada son editables. / Album with artists. */
+        PatchedAlbumRequest: {
+            title?: string;
+            /** Format: date */
+            release_date?: string | null;
+            cover_url?: string;
+        };
+        /** @description Artista; nombre e imagen son editables. / Artist; name and image are editable. */
+        PatchedArtistRequest: {
+            name?: string;
+            image_url?: string;
+        };
+        /** @description Cambios parciales: rol y activo. / Partial changes: role and active flag. */
+        PatchedManagedUserUpdateRequest: {
+            role?: components["schemas"]["RoleEnum"];
+            is_active?: boolean;
+        };
+        /**
+         * @description Proxy saliente. Los contadores los actualiza la descarga, no la API.
+         *
+         *     Outbound proxy. The counters are maintained by downloads, not by the API.
+         */
+        PatchedProxyRequest: {
+            url?: string;
+            /** Activo */
+            enabled?: boolean;
+        };
+        /** @description Canción con sus artistas; título y numeración son editables. / Track with artists. */
+        PatchedTrackRequest: {
+            title?: string;
+            /** Format: int64 */
+            track_number?: number;
+            /** Format: int64 */
+            disc_number?: number;
+        };
+        /** @description Vigilancia de novedades. / New-release watch. */
+        PatchedWatchRequest: {
+            /** Nombre */
+            name?: string;
+            /** Activa */
+            enabled?: boolean;
+        };
+        /** @description Ajuste con valor efectivo y por defecto. / Setting with effective and default value. */
+        Preference: {
+            readonly key: string;
+            readonly value: unknown;
+            readonly default: unknown;
+        };
+        /**
+         * @description Valor nuevo de un ajuste. / New value for a setting.
+         *
+         *     Solo se admite el mismo tipo que el valor por defecto: así un ajuste no
+         *     cambia de forma y el código que lo lee no tiene que defenderse de ello.
+         *     Only the default's type is accepted, so a setting never changes shape and
+         *     its readers need no defensive parsing.
+         */
+        PreferenceWriteRequest: {
+            value: unknown;
+        };
         /** @description Usuario con sesión y su rol. / Signed-in user and role. */
         Profile: {
             username: string;
             role: components["schemas"]["RoleEnum"];
+        };
+        /**
+         * @description Proxy saliente. Los contadores los actualiza la descarga, no la API.
+         *
+         *     Outbound proxy. The counters are maintained by downloads, not by the API.
+         */
+        Proxy: {
+            readonly id: number;
+            url: string;
+            /** Activo */
+            enabled?: boolean;
+            /** Éxitos */
+            readonly success_count: number;
+            /** Fallos */
+            readonly failure_count: number;
+            /**
+             * Último uso
+             * Format: date-time
+             */
+            readonly last_used_at: string | null;
+            /**
+             * Último fallo
+             * Format: date-time
+             */
+            readonly last_failed_at: string | null;
+            /**
+             * Creado
+             * Format: date-time
+             */
+            readonly created_at: string;
+        };
+        /** @description Resultado de probar un proxy. / Result of testing a proxy. */
+        ProxyCheck: {
+            ok: boolean;
+            status_code: number | null;
+        };
+        /**
+         * @description Proxy saliente. Los contadores los actualiza la descarga, no la API.
+         *
+         *     Outbound proxy. The counters are maintained by downloads, not by the API.
+         */
+        ProxyRequest: {
+            url: string;
+            /** Activo */
+            enabled?: boolean;
+        };
+        /** @description Versión a la que volver. / Version to go back to. */
+        RevertRequest: {
+            history_id: number;
         };
         /**
          * @description * `administrador` - administrador
@@ -175,11 +1386,110 @@ export interface components {
         SetupStatus: {
             needed: boolean;
         };
+        /** @description Una línea de log técnico en base de datos. / One technical log line in the database. */
+        TechnicalLog: {
+            readonly id: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly level: components["schemas"]["TechnicalLogLevelEnum"];
+            readonly logger_name: string;
+            readonly msg: string;
+            readonly trace: string | null;
+        };
+        /**
+         * @description * `0` - NotSet
+         *     * `20` - Info
+         *     * `30` - Warning
+         *     * `10` - Debug
+         *     * `40` - Error
+         *     * `50` - Fatal
+         * @enum {integer}
+         */
+        TechnicalLogLevelEnum: 0 | 20 | 30 | 10 | 40 | 50;
+        /** @description Canción con sus artistas; título y numeración son editables. / Track with artists. */
+        Track: {
+            readonly id: number;
+            readonly album: number;
+            title: string;
+            /** Format: int64 */
+            track_number?: number;
+            /** Format: int64 */
+            disc_number?: number;
+            /** @description Segundos. */
+            readonly duration: number | null;
+            readonly isrc: string | null;
+            readonly artists: components["schemas"]["Credit"][];
+            readonly downloaded: boolean;
+            readonly deezer_id: number | null;
+            /** Format: uuid */
+            readonly musicbrainz_id: string | null;
+        };
+        /** @description Canción con sus artistas; título y numeración son editables. / Track with artists. */
+        TrackRequest: {
+            title: string;
+            /** Format: int64 */
+            track_number?: number;
+            /** Format: int64 */
+            disc_number?: number;
+        };
         /** @description Cambio de nombre de usuario. / Username change. */
         UsernameChangeRequest: {
             current_password: string;
             username: string;
         };
+        /** @description Vigilancia de novedades. / New-release watch. */
+        Watch: {
+            readonly id: number;
+            /** Nombre */
+            name: string;
+            /** Activa */
+            enabled?: boolean;
+            /**
+             * Creada
+             * Format: date-time
+             */
+            readonly created_at: string;
+            /**
+             * Actualizada
+             * Format: date-time
+             */
+            readonly updated_at: string;
+        };
+        /** @description Vigilancia de novedades. / New-release watch. */
+        WatchRequest: {
+            /** Nombre */
+            name: string;
+            /** Activa */
+            enabled?: boolean;
+        };
+        /** @description Resultado de una comprobación, solo lectura. / One check result, read-only. */
+        WatchRun: {
+            readonly id: number;
+            /** Vigilancia */
+            readonly watch: number;
+            /**
+             * Inicio
+             * Format: date-time
+             */
+            readonly started_at: string;
+            /**
+             * Fin
+             * Format: date-time
+             */
+            readonly finished_at: string;
+            /** Estado */
+            readonly status: components["schemas"]["WatchRunStatusEnum"];
+            /** Novedades encontradas */
+            readonly found: number;
+            /** Detalle */
+            readonly detail: string;
+        };
+        /**
+         * @description * `succeeded` - correcta
+         *     * `failed` - fallida
+         * @enum {string}
+         */
+        WatchRunStatusEnum: "succeeded" | "failed";
     };
     responses: never;
     parameters: never;
@@ -273,7 +1583,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Profile"];
+                    "application/json": components["schemas"]["Me"];
                 };
             };
         };
@@ -375,6 +1685,1479 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Profile"];
+                };
+            };
+        };
+    };
+    v1_accounts_users_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedUser"][];
+                };
+            };
+        };
+    };
+    v1_accounts_users_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ManagedUserCreateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ManagedUserCreateRequest"];
+                "multipart/form-data": components["schemas"]["ManagedUserCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedUser"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_accounts_users_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este usuario. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedManagedUserUpdateRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedManagedUserUpdateRequest"];
+                "multipart/form-data": components["schemas"]["PatchedManagedUserUpdateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ManagedUser"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_activity_entries_list: {
+        parameters: {
+            query?: {
+                action?: string;
+                date_from?: string;
+                date_to?: string;
+                object_id?: string;
+                object_type?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                user?: number;
+                username?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedActivityLogList"];
+                };
+            };
+        };
+    };
+    v1_activity_entries_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este activity log. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActivityLog"];
+                };
+            };
+        };
+    };
+    v1_activity_logs_list: {
+        parameters: {
+            query?: {
+                date_from?: string;
+                date_to?: string;
+                min_level?: number;
+                module?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                search?: string;
+                task?: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTechnicalLogList"];
+                };
+            };
+        };
+    };
+    v1_activity_logs_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este Logging. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalLog"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_list: {
+        parameters: {
+            query?: {
+                artist?: number;
+                deezer_id?: number;
+                musicbrainz_id?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                released_after?: string;
+                released_before?: string;
+                /** @description Un término de búsqueda. */
+                search?: string;
+                title__icontains?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAlbumList"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AlbumRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["AlbumRequest"];
+                "multipart/form-data": components["schemas"]["AlbumRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAlbumRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedAlbumRequest"];
+                "multipart/form-data": components["schemas"]["PatchedAlbumRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_artists_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArtistIdsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ArtistIdsRequest"];
+                "multipart/form-data": components["schemas"]["ArtistIdsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_history_list: {
+        parameters: {
+            query?: {
+                artist?: number;
+                deezer_id?: number;
+                musicbrainz_id?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                released_after?: string;
+                released_before?: string;
+                /** @description Un término de búsqueda. */
+                search?: string;
+                title__icontains?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedHistoryEntryList"];
+                };
+            };
+        };
+    };
+    v1_catalog_albums_revert_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este album. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RevertRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RevertRequest"];
+                "multipart/form-data": components["schemas"]["RevertRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Album"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_list: {
+        parameters: {
+            query?: {
+                deezer_id?: number;
+                musicbrainz_id?: string;
+                name__icontains?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedArtistList"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Artist"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArtistRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ArtistRequest"];
+                "multipart/form-data": components["schemas"]["ArtistRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Artist"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedArtistRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedArtistRequest"];
+                "multipart/form-data": components["schemas"]["PatchedArtistRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Artist"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_history_list: {
+        parameters: {
+            query?: {
+                deezer_id?: number;
+                musicbrainz_id?: string;
+                name__icontains?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedHistoryEntryList"];
+                };
+            };
+        };
+    };
+    v1_catalog_artists_revert_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este artist. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RevertRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RevertRequest"];
+                "multipart/form-data": components["schemas"]["RevertRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Artist"];
+                };
+            };
+        };
+    };
+    v1_catalog_blocked_list: {
+        parameters: {
+            query?: {
+                deezer_id?: number;
+                /**
+                 * @description * `artist` - Artista
+                 *     * `album` - Álbum
+                 *     * `track` - Canción
+                 */
+                kind?: "album" | "artist" | "track";
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedBlockedItemList"];
+                };
+            };
+        };
+    };
+    v1_catalog_blocked_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlockedItemRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["BlockedItemRequest"];
+                "multipart/form-data": components["schemas"]["BlockedItemRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockedItem"];
+                };
+            };
+        };
+    };
+    v1_catalog_blocked_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este blocked item. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    v1_catalog_deezer_artists_retrieve: {
+        parameters: {
+            query: {
+                index?: number;
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DeezerSearch"];
+                };
+            };
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_catalog_summary_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibrarySummary"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_list: {
+        parameters: {
+            query?: {
+                album?: number;
+                artist?: number;
+                deezer_id?: number;
+                downloaded?: boolean;
+                isrc?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+                title__icontains?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTrackList"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TrackRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TrackRequest"];
+                "multipart/form-data": components["schemas"]["TrackRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedTrackRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedTrackRequest"];
+                "multipart/form-data": components["schemas"]["PatchedTrackRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_artists_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArtistIdsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ArtistIdsRequest"];
+                "multipart/form-data": components["schemas"]["ArtistIdsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_history_list: {
+        parameters: {
+            query?: {
+                album?: number;
+                artist?: number;
+                deezer_id?: number;
+                downloaded?: boolean;
+                isrc?: string;
+                /** @description Qué campo usar para ordenar los resultados. */
+                ordering?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                /** @description Número de resultados a devolver por página. */
+                page_size?: number;
+                /** @description Un término de búsqueda. */
+                search?: string;
+                title__icontains?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedHistoryEntryList"];
+                };
+            };
+        };
+    };
+    v1_catalog_tracks_revert_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este track. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RevertRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["RevertRequest"];
+                "multipart/form-data": components["schemas"]["RevertRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Track"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_list: {
+        parameters: {
+            query?: {
+                kind?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                started_after?: string;
+                started_before?: string;
+                /**
+                 * @description * `pending` - pendiente
+                 *     * `running` - en curso
+                 *     * `stopping` - deteniéndose
+                 *     * `stopped` - detenida
+                 *     * `succeeded` - correcta
+                 *     * `failed` - fallida
+                 *     * `interrupted` - interrumpida
+                 */
+                status?: "failed" | "interrupted" | "pending" | "running" | "stopped" | "stopping" | "succeeded";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedJobRunList"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["JobStartRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["JobStartRequest"];
+                "multipart/form-data": components["schemas"]["JobStartRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este job run. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_lines_list: {
+        parameters: {
+            query?: {
+                /** @description Última posición ya recibida. / Last position received. */
+                after?: number;
+                kind?: string;
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+                started_after?: string;
+                started_before?: string;
+                /**
+                 * @description * `pending` - pendiente
+                 *     * `running` - en curso
+                 *     * `stopping` - deteniéndose
+                 *     * `stopped` - detenida
+                 *     * `succeeded` - correcta
+                 *     * `failed` - fallida
+                 *     * `interrupted` - interrumpida
+                 */
+                status?: "failed" | "interrupted" | "pending" | "running" | "stopped" | "stopping" | "succeeded";
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este job run. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedJobRunLineList"];
+                };
+            };
+        };
+    };
+    v1_jobs_runs_stop_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este job run. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_preferences_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preference"][];
+                };
+            };
+        };
+    };
+    v1_preferences_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preference"];
+                };
+            };
+        };
+    };
+    v1_preferences_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreferenceWriteRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PreferenceWriteRequest"];
+                "multipart/form-data": components["schemas"]["PreferenceWriteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preference"];
+                };
+            };
+        };
+    };
+    v1_proxies_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"][];
+                };
+            };
+        };
+    };
+    v1_proxies_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProxyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProxyRequest"];
+                "multipart/form-data": components["schemas"]["ProxyRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"];
+                };
+            };
+        };
+    };
+    v1_proxies_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"];
+                };
+            };
+        };
+    };
+    v1_proxies_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProxyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["ProxyRequest"];
+                "multipart/form-data": components["schemas"]["ProxyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"];
+                };
+            };
+        };
+    };
+    v1_proxies_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    v1_proxies_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedProxyRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedProxyRequest"];
+                "multipart/form-data": components["schemas"]["PatchedProxyRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Proxy"];
+                };
+            };
+        };
+    };
+    v1_proxies_check_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este proxy. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProxyCheck"];
+                };
+            };
+        };
+    };
+    v1_watches_list: {
+        parameters: {
+            query?: {
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedWatchList"];
+                };
+            };
+        };
+    };
+    v1_watches_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WatchRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["WatchRequest"];
+                "multipart/form-data": components["schemas"]["WatchRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Watch"];
+                };
+            };
+        };
+    };
+    v1_watches_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Watch"];
+                };
+            };
+        };
+    };
+    v1_watches_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WatchRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["WatchRequest"];
+                "multipart/form-data": components["schemas"]["WatchRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Watch"];
+                };
+            };
+        };
+    };
+    v1_watches_destroy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    v1_watches_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedWatchRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedWatchRequest"];
+                "multipart/form-data": components["schemas"]["PatchedWatchRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Watch"];
+                };
+            };
+        };
+    };
+    v1_watches_runs_list: {
+        parameters: {
+            query?: {
+                /** @description Un número de página dentro del conjunto de resultados paginado. */
+                page?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Un valor de entero único que identifique este watch. */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedWatchRunList"];
                 };
             };
         };

@@ -2,9 +2,11 @@
 
 from typing import Any, cast
 
+from axes.models import AccessAttempt
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.models import Group, User
 from django.db import transaction
+from django.db.models import Sum
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
@@ -20,6 +22,7 @@ from core.serializers import DetailSerializer
 from .roles import ADMIN_GROUP, role_of
 from .serializers import (
     CredentialsSerializer,
+    MeSerializer,
     NewAccountSerializer,
     PasswordChangeSerializer,
     ProfileSerializer,
@@ -128,10 +131,21 @@ class MeView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(responses=ProfileSerializer, tags=["accounts"])
+    @extend_schema(responses=MeSerializer, tags=["accounts"])
     def get(self, request: Request) -> Response:
-        """Devuelve usuario y rol. / Returns username and role."""
-        return Response(_profile(_me(request)))
+        """Devuelve usuario, rol e intentos fallidos desde el último inicio de sesión.
+
+        Returns username, role and failed attempts since the last successful sign-in.
+        """
+        user = _me(request)
+        # django-axes borra los intentos de un usuario al entrar bien, así que la suma
+        # cuenta solo lo ocurrido desde el último inicio de sesión.
+        # django-axes clears a user's attempts on a successful sign-in, so the sum only
+        # covers failures since the last sign-in.
+        failed = AccessAttempt.objects.filter(username=user.get_username()).aggregate(
+            total=Sum("failures_since_start")
+        )["total"]
+        return Response({**_profile(user), "failed_attempts": failed or 0})
 
 
 class PasswordChangeView(APIView):

@@ -1,5 +1,10 @@
 """Rutas de la app ``proxies``. / ``proxies`` app URLs."""
 
-from django.urls import URLPattern
+from rest_framework.routers import SimpleRouter
 
-urlpatterns: list[URLPattern] = []
+from . import views
+
+router = SimpleRouter()
+router.register("", views.ProxyViewSet, basename="proxy")
+
+urlpatterns = router.urls
