@@ -8,17 +8,22 @@ from django.db import transaction
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.serializers import DetailSerializer
+
 from .roles import ADMIN_GROUP, role_of
 from .serializers import (
     CredentialsSerializer,
     NewAccountSerializer,
     PasswordChangeSerializer,
+    ProfileSerializer,
+    SetupStatusSerializer,
     UsernameChangeSerializer,
 )
 
@@ -46,11 +51,17 @@ class SetupView(_AnonymousView):
     Status and creation of the first administrator; closed once any user exists.
     """
 
+    @extend_schema(responses=SetupStatusSerializer, tags=["accounts"])
     @method_decorator(ensure_csrf_cookie)
     def get(self, request: Request) -> Response:
         """Indica si falta configurar y entrega la cookie CSRF. / Reports setup status."""
         return Response({"needed": not User.objects.exists()})
 
+    @extend_schema(
+        request=NewAccountSerializer,
+        responses={201: ProfileSerializer, 403: DetailSerializer},
+        tags=["accounts"],
+    )
     def post(self, request: Request) -> Response:
         """Crea el primer administrador y abre su sesión. / Creates the first admin."""
         serializer = NewAccountSerializer(data=request.data)
@@ -79,6 +90,11 @@ class LoginView(_AnonymousView):
     Login; django-axes blocks repeated attempts.
     """
 
+    @extend_schema(
+        request=CredentialsSerializer,
+        responses={200: ProfileSerializer, 400: DetailSerializer},
+        tags=["accounts"],
+    )
     def post(self, request: Request) -> Response:
         """Abre la sesión con usuario y contraseña. / Opens a session."""
         serializer = CredentialsSerializer(data=request.data)
@@ -100,6 +116,7 @@ class LogoutView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=None, responses={204: None}, tags=["accounts"])
     def post(self, request: Request) -> Response:
         """Cierra la sesión. / Closes the session."""
         logout(request._request)
@@ -111,6 +128,7 @@ class MeView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(responses=ProfileSerializer, tags=["accounts"])
     def get(self, request: Request) -> Response:
         """Devuelve usuario y rol. / Returns username and role."""
         return Response(_profile(_me(request)))
@@ -121,6 +139,7 @@ class PasswordChangeView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=PasswordChangeSerializer, responses={204: None}, tags=["accounts"])
     def post(self, request: Request) -> Response:
         """Cambia la contraseña y conserva la sesión actual. / Changes the password."""
         serializer = PasswordChangeSerializer(data=request.data, context={"request": request})
@@ -139,6 +158,7 @@ class UsernameChangeView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=UsernameChangeSerializer, responses=ProfileSerializer, tags=["accounts"])
     def post(self, request: Request) -> Response:
         """Renombra al usuario. / Renames the user."""
         serializer = UsernameChangeSerializer(data=request.data, context={"request": request})

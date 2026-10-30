@@ -3,7 +3,7 @@ import { http, HttpResponse } from 'msw'
 import type { Job } from '../stores/jobs'
 import type { User } from '../stores/session'
 
-const user: User = { id: 1, username: 'demo', role: 'administrator' }
+const user: User = { username: 'demo', role: 'administrador' }
 const jobs: Job[] = [
   { id: 1, kind: 'import', status: 'running', progress: 40 },
   { id: 2, kind: 'download', status: 'succeeded', progress: 100 },

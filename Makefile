@@ -1,4 +1,4 @@
-.PHONY: dev lint test migrate docs
+.PHONY: dev lint test migrate docs api
 
 # Arranca backend y frontend. / Starts backend and frontend.
 dev:
@@ -18,3 +18,8 @@ migrate:
 
 docs:
 	mkdocs serve
+
+# Regenera el esquema OpenAPI y los tipos del frontend. / Regenerates the OpenAPI schema and frontend types.
+api:
+	cd backend && python manage.py spectacular --file openapi.yaml --validate --fail-on-warn
+	cd frontend && npm run api:types

@@ -99,6 +99,9 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Glissandi API",
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    # Un tipo para lo que se envía y otro para lo que se recibe (p. ej. campos write_only).
+    # Separate types for what is sent and what is received (e.g. write_only fields).
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 # Cada bloque lo edita un único módulo; así los cambios en paralelo no chocan.
