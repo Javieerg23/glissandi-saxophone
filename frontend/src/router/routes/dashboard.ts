@@ -8,6 +8,6 @@ export default [
     path: '/panel',
     name: 'dashboard',
     component: DashboardView,
-    meta: { navLabel: 'dashboard.nav' },
+    meta: { navLabel: 'dashboard.nav', navGroup: 'main', navOrder: 10 },
   },
 ] satisfies RouteRecordRaw[]

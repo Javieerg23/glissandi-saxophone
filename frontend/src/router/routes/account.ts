@@ -8,6 +8,6 @@ export default [
     path: '/cuenta',
     name: 'account',
     component: AccountView,
-    meta: { navLabel: 'account.nav' },
+    meta: { navLabel: 'account.nav', navGroup: 'more', navOrder: 90 },
   },
 ] satisfies RouteRecordRaw[]
