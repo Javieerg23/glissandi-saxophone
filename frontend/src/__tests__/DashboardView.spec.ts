@@ -6,6 +6,8 @@ import { server } from '../mocks/server'
 import DashboardView from '../views/DashboardView.vue'
 import { mountView } from './viewHelpers'
 
+const page = (results: unknown[]) => HttpResponse.json({ count: results.length, results })
+
 afterEach(() => vi.useRealTimers())
 
 describe('DashboardView', () => {
@@ -20,13 +22,14 @@ describe('DashboardView', () => {
     const items = wrapper.findAll('.jobs li')
     expect(items).toHaveLength(1)
     expect(items[0]?.text()).toContain('Importación')
+    expect(items[0]?.text()).toContain('Daft Punk')
     expect(wrapper.get('[role="progressbar"]').attributes('aria-valuenow')).toBe('40')
   })
 
   it('usa el tipo tal cual si no tiene traducción', async () => {
     server.use(
-      http.get('/api/v1/jobs/', () =>
-        HttpResponse.json([{ id: 9, kind: 'raro', status: 'running', progress: 5 }]),
+      http.get('/api/v1/jobs/runs/', () =>
+        page([{ id: 9, kind: 'raro', status: 'running', done: 0, total: 0, current: '' }]),
       ),
     )
     const { wrapper } = await mountView(DashboardView, '/panel')
@@ -34,7 +37,7 @@ describe('DashboardView', () => {
   })
 
   it('indica que no hay tareas en curso', async () => {
-    server.use(http.get('/api/v1/jobs/', () => HttpResponse.json([])))
+    server.use(http.get('/api/v1/jobs/runs/', () => page([])))
     const { wrapper } = await mountView(DashboardView, '/panel')
     expect(wrapper.text()).toContain('No hay tareas en curso.')
   })
@@ -53,9 +56,9 @@ describe('DashboardView', () => {
     vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
     let calls = 0
     server.use(
-      http.get('/api/v1/jobs/', () => {
+      http.get('/api/v1/jobs/runs/', () => {
         calls += 1
-        return HttpResponse.json([])
+        return page([])
       }),
     )
     const { wrapper } = await mountView(DashboardView, '/panel')
@@ -70,10 +73,10 @@ describe('DashboardView', () => {
 
   it('un fallo al refrescar se muestra y se borra cuando vuelve a funcionar', async () => {
     vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
-    server.use(http.get('/api/v1/jobs/', () => HttpResponse.error()))
+    server.use(http.get('/api/v1/jobs/runs/', () => HttpResponse.error()))
     const { wrapper } = await mountView(DashboardView, '/panel')
     expect(wrapper.find('[role="alert"]').exists()).toBe(true)
-    server.use(http.get('/api/v1/jobs/', () => HttpResponse.json([])))
+    server.use(http.get('/api/v1/jobs/runs/', () => page([])))
     await vi.advanceTimersByTimeAsync(5000)
     await flushPromises()
     expect(wrapper.find('[role="alert"]').exists()).toBe(false)

@@ -6,7 +6,7 @@ import { api } from '../api/client'
 import { errorText } from '../api/errors'
 import BaseAlert from '../components/BaseAlert.vue'
 import ProgressBar from '../components/ProgressBar.vue'
-import { useJobsStore } from '../stores/jobs'
+import { progressOf, useJobsStore } from '../stores/jobs'
 
 /** Totales de la biblioteca que muestra el panel. */
 interface LibrarySummary {
@@ -77,8 +77,9 @@ onUnmounted(() => clearInterval(timer))
     <ul v-else class="jobs">
       <li v-for="job in jobs.active" :key="job.id">
         <span>{{ kindLabel(job.kind) }}</span>
+        <small v-if="job.current">{{ job.current }}</small>
         <ProgressBar
-          :value="job.progress"
+          :value="progressOf(job)"
           :label="t('dashboard.jobs.progress', { kind: kindLabel(job.kind) })"
         />
       </li>
