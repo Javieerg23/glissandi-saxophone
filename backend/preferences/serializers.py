@@ -1,11 +1,36 @@
 """Serializadores de ajustes. / Settings serializers."""
 
+from collections.abc import Callable
 from typing import Any
 
 from django.utils.translation import gettext as _
 from rest_framework import serializers
 
+from integrations.audio import FORMATS, Tags, render_path
+
 from .defaults import DEFAULTS
+
+
+def _check_template(value: str) -> None:
+    """Prueba la plantilla con una canción de ejemplo. / Tries the template on a sample track."""
+    try:
+        render_path(value, Tags(title="t", artists=("a",)), "mp3")
+    except (KeyError, ValueError, IndexError, AttributeError) as error:
+        raise serializers.ValidationError(_("La plantilla no es válida.")) from error
+
+
+def _check_format(value: str) -> None:
+    """Solo formatos que sabe producir la conversión. / Only formats conversion can produce."""
+    if value not in FORMATS:
+        raise serializers.ValidationError(_("Formato no admitido: %(value)s.") % {"value": value})
+
+
+# Ajustes que la descarga usaría tal cual: un valor erróneo haría fallar todas.
+# Settings downloads use as-is: a bad value would make every one fail.
+_CHECKS: dict[str, Callable[[Any], None]] = {
+    "download.format": _check_format,
+    "download.name_template": _check_template,
+}
 
 
 class PreferenceSerializer(serializers.Serializer[dict[str, Any]]):
@@ -44,4 +69,6 @@ class PreferenceWriteSerializer(serializers.Serializer[dict[str, Any]]):
             raise serializers.ValidationError(
                 _("El valor debe ser de tipo %(type)s.") % {"type": expected.__name__}
             )
+        if check := _CHECKS.get(self.context["key"]):
+            check(value)
         return value

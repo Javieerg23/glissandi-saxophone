@@ -87,3 +87,26 @@ def test_put_accepts_a_bool_for_a_bool_setting(admin: APIClient, declared: None)
     response = admin.put(f"{URL}demo.flag/", {"value": False}, format="json")
     assert response.status_code == 200
     assert response.json()["value"] is False
+
+
+@pytest.mark.parametrize(
+    ("key", "value"),
+    [
+        ("download.format", "wma"),
+        ("download.name_template", "{artist}/{desconocido}"),
+        ("download.name_template", "{artist"),
+        ("download.name_template", "/"),
+    ],
+)
+def test_put_rejects_values_downloads_cannot_use(admin: APIClient, key: str, value: str) -> None:
+    """Un valor que haría fallar cada descarga se rechaza al guardarlo."""
+    response = admin.put(f"{URL}{key}/", {"value": value}, format="json")
+    assert response.status_code == 400
+    assert not Preference.objects.filter(key=key).exists()
+
+
+@pytest.mark.parametrize(
+    ("key", "value"), [("download.format", "flac"), ("download.name_template", "{year}/{title}")]
+)
+def test_put_accepts_valid_download_values(admin: APIClient, key: str, value: str) -> None:
+    assert admin.put(f"{URL}{key}/", {"value": value}, format="json").status_code == 200

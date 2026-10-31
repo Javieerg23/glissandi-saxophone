@@ -52,3 +52,10 @@ msgstr "Only an administrator can restore the library."
 #, python-format
 msgid "%(created)d elementos añadidos, %(skipped)d ya existían."
 msgstr "%(created)d items added, %(skipped)d already existed."
+
+msgid "La plantilla no es válida."
+msgstr "The template is not valid."
+
+#, python-format
+msgid "Formato no admitido: %(value)s."
+msgstr "Unsupported format: %(value)s."
