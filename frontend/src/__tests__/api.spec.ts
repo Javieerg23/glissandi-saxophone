@@ -31,6 +31,23 @@ describe('api()', () => {
     expect(seen).toEqual({ get: null, post: 'abc123' })
   })
 
+  it('envía un FormData como multipart, sin JSON', async () => {
+    let type: string | null = null
+    let name = ''
+    server.use(
+      http.post('/api/t/', async ({ request }) => {
+        type = request.headers.get('Content-Type')
+        name = await ((await request.formData()).get('file') as File).text()
+        return HttpResponse.json({})
+      }),
+    )
+    const body = new FormData()
+    body.append('file', new File(['[]'], 'copia.json'))
+    await api('/api/t/', { method: 'POST', body })
+    expect(type).toMatch(/^multipart\/form-data; boundary=/)
+    expect(name).toBe('[]')
+  })
+
   it('envía cadena vacía si no hay cookie CSRF', async () => {
     document.cookie = 'csrftoken=; max-age=0'
     let token: string | null = null

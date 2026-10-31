@@ -977,6 +977,121 @@ paths:
               schema:
                 $ref: '#/components/schemas/Artist'
           description: ''
+  /api/v1/catalog/backup/:
+    get:
+      operationId: v1_catalog_backup_retrieve
+      description: Copia completa de la biblioteca (``dumpdata``), como fichero adjunto.
+        / Full library backup (``dumpdata``) as an attachment.
+      tags:
+      - catalog
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+          description: Fichero de copia. / Backup file.
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+  /api/v1/catalog/backup/preview/:
+    post:
+      operationId: v1_catalog_backup_preview_create
+      description: Cuenta lo que trae la copia y lo que ya existe; no cambia nada.
+        / Counts what the backup holds and what already exists; changes nothing.
+      tags:
+      - catalog
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BackupUploadRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BackupPreview'
+              examples:
+                VistaPrevia:
+                  value:
+                    artists:
+                      total: 12
+                      existing: 10
+                    albums:
+                      total: 40
+                      existing: 35
+                    tracks:
+                      total: 480
+                      existing: 420
+                    downloads:
+                      total: 300
+                      existing: 300
+                  summary: Vista previa
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Fichero no válido. / Invalid file.
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+  /api/v1/catalog/backup/restore/:
+    post:
+      operationId: v1_catalog_backup_restore_create
+      description: Valida la copia y lanza la tarea ``library_restore``, que añade
+        lo que falta sin reescribir lo que ya existe. / Validates the backup and starts
+        the ``library_restore`` task, which adds what is missing without rewriting
+        existing rows.
+      tags:
+      - catalog
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BackupUploadRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobRun'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Fichero no válido. / Invalid file.
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Detail'
+          description: Ya hay otra en curso. / Another one is running.
   /api/v1/catalog/blocked/:
     get:
       operationId: v1_catalog_blocked_list
@@ -2276,6 +2391,45 @@ components:
             maxLength: 0
       required:
       - name
+    BackupCount:
+      type: object
+      description: Elementos de un tipo en la copia. / Items of one kind in the backup.
+      properties:
+        total:
+          type: integer
+        existing:
+          type: integer
+          description: Ya en la biblioteca. / Already in the library.
+      required:
+      - existing
+      - total
+    BackupPreview:
+      type: object
+      description: Vista previa de una copia. / Backup preview.
+      properties:
+        artists:
+          $ref: '#/components/schemas/BackupCount'
+        albums:
+          $ref: '#/components/schemas/BackupCount'
+        tracks:
+          $ref: '#/components/schemas/BackupCount'
+        downloads:
+          $ref: '#/components/schemas/BackupCount'
+      required:
+      - albums
+      - artists
+      - downloads
+      - tracks
+    BackupUploadRequest:
+      type: object
+      description: Fichero de copia subido. / Uploaded backup file.
+      properties:
+        file:
+          type: string
+          format: binary
+          description: JSON exportado. / Exported JSON.
+      required:
+      - file
     BlockedItem:
       type: object
       description: Elemento bloqueado; un bloqueo por tipo e identificador. / Blocked

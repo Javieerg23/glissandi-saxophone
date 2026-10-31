@@ -1,0 +1,50 @@
+{
+  "proxies": {
+    "nav": "Proxies",
+    "title": "Proxies",
+    "intro": "Las descargas salen por los proxies activos y se reparten entre ellos.",
+    "add": "Añadir proxy",
+    "columns": {
+      "url": "Dirección",
+      "status": "Estado",
+      "success": "Éxitos",
+      "failure": "Fallos",
+      "lastUsed": "Último uso",
+      "actions": "Acciones"
+    },
+    "status": {
+      "enabled": "Activo",
+      "disabled": "Inactivo"
+    },
+    "never": "Nunca",
+    "actions": {
+      "edit": "Editar",
+      "enable": "Activar",
+      "disable": "Desactivar",
+      "check": "Probar",
+      "delete": "Borrar"
+    },
+    "form": {
+      "createTitle": "Nuevo proxy",
+      "editTitle": "Editar proxy",
+      "url": "Dirección (http, https, socks5 o socks5h)",
+      "enabled": "Activo",
+      "save": "Guardar"
+    },
+    "delete": {
+      "title": "Borrar proxy",
+      "confirm": "¿Borrar {url}? No se puede deshacer.",
+      "submit": "Borrar"
+    },
+    "check": {
+      "ok": "{url} funciona (HTTP {status}).",
+      "failed": "{url} no responde.",
+      "failedStatus": "{url} responde con un error (HTTP {status})."
+    },
+    "done": {
+      "created": "Proxy añadido.",
+      "updated": "Proxy guardado.",
+      "deleted": "Proxy borrado."
+    }
+  }
+}
