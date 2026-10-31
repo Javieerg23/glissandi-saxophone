@@ -1,4 +1,3 @@
-import { flushPromises } from '@vue/test-utils'
 import { http, HttpResponse } from 'msw'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -6,6 +5,7 @@ import libraryHandlers from '../mocks/handlers/library'
 import { server } from '../mocks/server'
 import { useSessionStore } from '../stores/session'
 import LibraryItemView from '../views/library/LibraryItemView.vue'
+import { trackRequests } from './settle'
 import { fill, mountView } from './viewHelpers'
 
 // jsdom no implementa showModal/close de <dialog>.
@@ -24,7 +24,7 @@ async function open(path: string, role: 'administrador' | 'usuario' = 'administr
   server.use(http.get('/api/v1/accounts/me/', () => HttpResponse.json({ username: 'u', role })))
   const ctx = await mountView(LibraryItemView, path)
   await useSessionStore(ctx.pinia).fetchMe()
-  await flushPromises()
+  await settle()
   return ctx
 }
 
@@ -43,7 +43,11 @@ function capture(method: string, path: string): Promise<unknown> {
 }
 
 // Otras zonas (Descargar) también simulan las listas del catálogo: aquí mandan las de la Biblioteca.
-beforeEach(() => server.use(...libraryHandlers))
+let settle: () => Promise<void>
+beforeEach(() => {
+  server.use(...libraryHandlers)
+  settle = trackRequests()
+})
 afterEach(() => server.events.removeAllListeners())
 
 describe('LibraryItemView', () => {
@@ -65,7 +69,7 @@ describe('LibraryItemView', () => {
     const { wrapper, router } = await open('/biblioteca/tracks/101')
     router.addRoute({ path: '/subir/:id', name: 'track-upload', component: { render: () => null } })
     await router.push('/biblioteca/tracks/100')
-    await flushPromises()
+    await settle()
     expect(link(wrapper, 'Subir audio')?.attributes('href')).toBe('/subir/100')
     expect(wrapper.get('.item__downloaded').text()).toBe('Sí')
   })
@@ -74,7 +78,7 @@ describe('LibraryItemView', () => {
     const { wrapper, router } = await open('/biblioteca/tracks/101')
     expect(wrapper.text()).not.toContain('ISRC')
     await link(wrapper, 'Ver el álbum')!.trigger('click')
-    await flushPromises()
+    await settle()
     expect(router.currentRoute.value.path).toBe('/biblioteca/albums/10')
     expect(wrapper.get('h1').text()).toBe('Random Access Memories')
     expect(wrapper.get('img').attributes('src')).toBe('https://example.com/ram.jpg')
@@ -88,7 +92,7 @@ describe('LibraryItemView', () => {
     const fetched = vi.fn()
     server.events.on('request:start', fetched)
     await router.push('/biblioteca')
-    await flushPromises()
+    await settle()
     expect(fetched).not.toHaveBeenCalled()
   })
 
@@ -130,7 +134,7 @@ describe('LibraryItemView', () => {
       await fill(wrapper, 'Título', 'Get Lucky (Edit)')
       await fill(wrapper, 'Número de pista', '9')
       await wrapper.get('form').trigger('submit')
-      await flushPromises()
+      await settle()
       expect(await body).toEqual({ title: 'Get Lucky (Edit)', track_number: 9, disc_number: 1 })
       expect(wrapper.get('h1').text()).toBe('Get Lucky (Edit)')
       expect(wrapper.get('[role="status"]').text()).toBe('Cambios guardados.')
@@ -155,7 +159,7 @@ describe('LibraryItemView', () => {
       )
       const { wrapper } = await open('/biblioteca/artists/1')
       await wrapper.get('form').trigger('submit')
-      await flushPromises()
+      await settle()
       expect(wrapper.get('.field__error').text()).toBe('Obligatorio.')
       expect(wrapper.find('[role="alert"]').exists()).toBe(false)
     })
@@ -166,7 +170,7 @@ describe('LibraryItemView', () => {
       )
       const { wrapper } = await open('/biblioteca/artists/1')
       await wrapper.get('form').trigger('submit')
-      await flushPromises()
+      await settle()
       expect(wrapper.get('[role="alert"]').text()).toBe(
         'El servidor ha fallado. Inténtalo más tarde.',
       )
@@ -185,12 +189,12 @@ describe('LibraryItemView', () => {
       await button(wrapper, 'Quitar a Daft Punk').trigger('click')
       await fill(wrapper, 'Buscar un artista del catálogo', 'daft')
       await wrapper.get('.artists-editor form').trigger('submit')
-      await flushPromises()
+      await settle()
       const add = wrapper.findAll('.artists-editor__found button')
       expect(add[1]?.attributes('disabled')).toBeDefined()
       await add[0]!.trigger('click')
       await button(wrapper, 'Guardar artistas').trigger('click')
-      await flushPromises()
+      await settle()
       expect(await body).toEqual({ artists: [2, 1] })
       expect(wrapper.get('[role="status"]').text()).toBe('Artistas actualizados.')
       expect(link(wrapper, 'Pharrell Williams')).toBeDefined()
@@ -211,12 +215,12 @@ describe('LibraryItemView', () => {
       )
       const { wrapper } = await open('/biblioteca/albums/10')
       await wrapper.get('.artists-editor form').trigger('submit')
-      await flushPromises()
+      await settle()
       expect(wrapper.get('.artists-editor [role="alert"]').text()).toContain(
         'El servidor ha fallado',
       )
       await button(wrapper, 'Guardar artistas').trigger('click')
-      await flushPromises()
+      await settle()
       expect(wrapper.get('.artists-editor [role="alert"]').text()).toBe('No existe.')
     })
   })
@@ -232,7 +236,7 @@ describe('LibraryItemView', () => {
       expect(entries[1]!.text()).toContain('Sistema')
       const body = capture('POST', '/api/v1/catalog/tracks/100/revert/')
       await entries[1]!.get('button').trigger('click')
-      await flushPromises()
+      await settle()
       expect(await body).toEqual({ history_id: 1 })
       expect(wrapper.get('[role="status"]').text()).toBe('Se ha vuelto a la versión elegida.')
     })
@@ -290,7 +294,7 @@ describe('LibraryItemView', () => {
       )
       const track = await open('/biblioteca/tracks/100')
       await track.wrapper.get('.history__entry button').trigger('click')
-      await flushPromises()
+      await settle()
       expect(track.wrapper.get('.history [role="alert"]').text()).toBe('Esa versión no existe.')
     })
   })
@@ -299,11 +303,11 @@ describe('LibraryItemView', () => {
     it('pide confirmación y bloquea la canción', async () => {
       const { wrapper } = await open('/biblioteca/tracks/100')
       await button(wrapper, 'Bloquear').trigger('click')
-      await flushPromises()
+      await settle()
       expect(wrapper.get('dialog').text()).toContain('¿Bloquear la canción «Get Lucky»?')
       const body = capture('POST', '/api/v1/catalog/blocked/')
       await wrapper.get('dialog .btn--danger').trigger('click')
-      await flushPromises()
+      await settle()
       expect(await body).toEqual({ kind: 'track', deezer_id: 67238735, name: 'Get Lucky' })
       expect(wrapper.get('[role="status"]').text()).toBe(
         'Bloqueado: no se volverá a importar ni a descargar.',
@@ -318,9 +322,9 @@ describe('LibraryItemView', () => {
         if (request.method === 'POST') posted()
       })
       await button(wrapper, 'Bloquear').trigger('click')
-      await flushPromises()
+      await settle()
       await button(wrapper, 'Cerrar').trigger('click')
-      await flushPromises()
+      await settle()
       expect(wrapper.get('dialog').attributes('open')).toBeUndefined()
       expect(posted).not.toHaveBeenCalled()
     })
@@ -334,7 +338,7 @@ describe('LibraryItemView', () => {
       const { wrapper } = await open('/biblioteca/albums/10')
       await button(wrapper, 'Bloquear').trigger('click')
       await wrapper.get('dialog .btn--danger').trigger('click')
-      await flushPromises()
+      await settle()
       expect(wrapper.get('[role="alert"]').text()).toBe('Ya está bloqueado.')
     })
 
