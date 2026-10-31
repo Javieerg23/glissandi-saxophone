@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from django.contrib.auth import password_validation
+from django.contrib.auth import authenticate, password_validation
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
@@ -45,7 +45,13 @@ class _CurrentPasswordSerializer(serializers.Serializer[Any]):
 
     def validate_current_password(self, value: str) -> str:
         """Comprueba la contraseña del usuario de la petición. / Checks the caller's password."""
-        if not self.context["request"].user.check_password(value):
+        request = self.context["request"]
+        # Por ``authenticate`` y no ``check_password``: así django-axes cuenta los fallos y
+        # una sesión robada no sirve para adivinar la clave sin límite.
+        # Through ``authenticate``, not ``check_password``, so django-axes counts failures
+        # and a hijacked session cannot guess the password without limit.
+        user = authenticate(request._request, username=request.user.get_username(), password=value)
+        if user is None:
             raise serializers.ValidationError(_("La contraseña actual no es correcta."))
         return value
 

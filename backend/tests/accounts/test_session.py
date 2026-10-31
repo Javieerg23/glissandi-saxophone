@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 
 from accounts.roles import ADMIN_GROUP, USER_GROUP
 
-from .conftest import BASE, PASSWORD
+from .conftest import BASE, PASSWORD, make_user
 
 pytestmark = pytest.mark.django_db
 
@@ -125,11 +125,39 @@ def test_cambio_de_clave_exige_la_actual(api: APIClient, basic_user: User) -> No
     assert response.status_code == 400
 
 
+@pytest.mark.parametrize("endpoint", ["password", "username"])
+def test_clave_actual_cuenta_para_el_bloqueo(
+    api: APIClient, basic_user: User, endpoint: str
+) -> None:
+    """Probar claves con una sesión robada bloquea igual que en el login."""
+    api.force_login(basic_user)
+    body = {"new_password": "otra-clave-larga-77", "username": "pepe2"}
+    for _ in range(5):
+        api.post(f"{BASE}/{endpoint}/", {**body, "current_password": "mala"})
+
+    response = api.post(f"{BASE}/{endpoint}/", {**body, "current_password": PASSWORD})
+
+    assert response.status_code == 429
+
+
 def test_cambio_de_clave_valida_la_nueva(api: APIClient, basic_user: User) -> None:
     """La nueva clave pasa por los validadores."""
     api.force_login(basic_user)
 
     response = api.post(f"{BASE}/password/", {"current_password": PASSWORD, "new_password": "1234"})
+
+    assert response.status_code == 400
+
+
+def test_cambio_de_clave_no_admite_una_parecida_al_usuario(db: None) -> None:
+    """El validador de parecido recibe al usuario: su nombre no sirve de clave."""
+    user = make_user("saxofonista", USER_GROUP)
+    client = APIClient()
+    client.force_login(user)
+
+    response = client.post(
+        f"{BASE}/password/", {"current_password": PASSWORD, "new_password": "saxofonista1"}
+    )
 
     assert response.status_code == 400
 
