@@ -1,7 +1,8 @@
 import { flushPromises } from '@vue/test-utils'
 import { http, HttpResponse } from 'msw'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import libraryHandlers from '../mocks/handlers/library'
 import { server } from '../mocks/server'
 import { useSessionStore } from '../stores/session'
 import LibraryItemView from '../views/library/LibraryItemView.vue'
@@ -41,6 +42,8 @@ function capture(method: string, path: string): Promise<unknown> {
   })
 }
 
+// Otras zonas (Descargar) también simulan las listas del catálogo: aquí mandan las de la Biblioteca.
+beforeEach(() => server.use(...libraryHandlers))
 afterEach(() => server.events.removeAllListeners())
 
 describe('LibraryItemView', () => {
