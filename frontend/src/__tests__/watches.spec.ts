@@ -1,6 +1,6 @@
 import { flushPromises } from '@vue/test-utils'
 import { http, HttpResponse } from 'msw'
-import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest'
+import { beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest'
 
 import type { components } from '../api/schema'
 import { POLL_MS } from '../composables/useJobRun'
@@ -26,7 +26,6 @@ Object.assign(HTMLDialogElement.prototype, {
 
 // Otras vistas simulan también `catalog/artists/` con sus propios datos: aquí mandan los de Novedades.
 beforeEach(() => server.use(...watchHandlers))
-afterEach(() => vi.useRealTimers())
 
 // Peticiones a MSW sin responder: una sola vuelta de `flushPromises` no basta en una máquina
 // lenta (navegación, petición y respuesta encadenadas), así que se espera a que no quede ninguna.
@@ -34,11 +33,17 @@ let inflight = 0
 server.events.on('request:start', () => void inflight++)
 server.events.on('response:mocked', () => void inflight--)
 
-/** Espera a que terminen las peticiones en curso y se pinte el resultado. */
+/**
+ * Espera a que terminen las peticiones en curso y se pinte el resultado. Una petición puede
+ * arrancar unos ciclos después del clic (navegación, vigilante), así que se exigen dos vueltas
+ * seguidas sin ninguna en vuelo.
+ */
 async function settle(): Promise<void> {
-  do await flushPromises()
-  while (inflight > 0)
-  await flushPromises()
+  for (let idle = 0; idle < 2;) {
+    await flushPromises()
+    await new Promise((resolve) => setTimeout(resolve, 10))
+    idle = inflight > 0 ? 0 : idle + 1
+  }
 }
 
 async function mount(...args: Parameters<typeof mountView>) {
@@ -311,17 +316,14 @@ describe('WatchView', () => {
       }),
     )
     const { wrapper } = await mount(WatchView, '/novedades/1')
-    vi.useFakeTimers({ shouldAdvanceTime: true })
     await button(wrapper, 'Comprobar ahora').trigger('click')
-    await settle()
+    // Tiempo real: el sondeo pasa a «Terminada» en el siguiente ciclo (POLL_MS).
+    await vi.waitFor(() => expect(wrapper.text()).toContain('En curso'))
     expect(launched).toEqual([{ kind: 'watch_check', params: { watch_id: 1 } }])
     expect(button(wrapper, 'Comprobar ahora').attributes('disabled')).toBeDefined()
-    expect(wrapper.text()).toContain('En curso')
     expect(runsCalls).toBe(1)
-    await vi.advanceTimersByTimeAsync(POLL_MS)
-    await settle()
+    await vi.waitFor(() => expect(runsCalls).toBe(2), { timeout: POLL_MS * 3 })
     expect(wrapper.text()).toContain('Terminada')
-    expect(runsCalls).toBe(2)
   })
 
   it('borra tras confirmar y vuelve a la lista', async () => {
