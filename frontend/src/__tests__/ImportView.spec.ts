@@ -151,7 +151,9 @@ describe('ImportView', () => {
   })
 
   it('enlaza a «Importar una carpeta» solo si esa vista existe', async () => {
-    // La ruta ya está en `routes/`: se quita para probar el caso sin ella y se repone después.
+    const { wrapper: linked } = await mountView(ImportView, '/importar')
+    expect(linked.get('a[href="/importar/carpeta"]').text()).toBe('Importar una carpeta')
+    // Sin la ruta de la carpeta (otra vista), el enlace no aparece.
     const index = routes.findIndex((r) => r.name === 'import-folder')
     const [folder] = routes.splice(index, 1)
     try {
@@ -160,8 +162,6 @@ describe('ImportView', () => {
     } finally {
       routes.splice(index, 0, folder!)
     }
-    const { wrapper: linked } = await mountView(ImportView, '/importar')
-    expect(linked.get(`a[href="${folder!.path}"]`).text()).toBe('Importar una carpeta')
   })
 
   it('tiene los mismos textos en español y en inglés', () => {

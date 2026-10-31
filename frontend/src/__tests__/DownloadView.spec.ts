@@ -6,6 +6,7 @@ import type { components } from '../api/schema'
 import { api } from '../api/client'
 import { messages } from '../locales'
 import { handlers } from '../mocks/handlers'
+import downloadHandlers from '../mocks/handlers/download'
 import { server } from '../mocks/server'
 import downloadRoutes from '../router/routes/download'
 import { render } from './helpers'
@@ -250,9 +251,10 @@ describe('respuestas simuladas de Descargar', () => {
   })
 
   it('dejan pasar las demás listas de canciones', async () => {
-    // Al final: solo responde si el handler de la zona deja pasar la petición.
+    // Al final: solo responde si el handler de la zona deja pasar la petición. Solo los de
+    // esta zona, porque otras (la Biblioteca) también responden a las listas de canciones.
     server.resetHandlers(
-      ...handlers,
+      ...downloadHandlers,
       http.get('/api/v1/catalog/tracks/', () => page([track(7, 'Otra')])),
     )
     expect(await titles('')).toEqual(['Otra'])
