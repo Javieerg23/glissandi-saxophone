@@ -112,6 +112,23 @@ def test_get_track_minimal_fields(client: DeezerClient) -> None:
 
 
 @responses.activate
+def test_get_track_by_isrc(client: DeezerClient) -> None:
+    responses.get(f"{API}/track/isrc:USQX91300108", json=_fixture("track"))
+    assert client.get_track_by_isrc("USQX91300108").id == 67238735
+
+
+@responses.activate
+def test_search_tracks_sends_the_query(client: DeezerClient) -> None:
+    body = {"data": [_fixture("track_minimal")], "total": 3, "next": "…"}
+    responses.get(f"{API}/search/track", json=body)
+    page = client.search_tracks('artist:"Solo" track:"Intro"')
+    assert [t.title for t in page.items] == ["Intro"]
+    assert (page.total, page.next_index) == (3, 1)
+    query = responses.calls[0].request.params  # type: ignore[attr-defined]
+    assert query["q"] == 'artist:"Solo" track:"Intro"'
+
+
+@responses.activate
 @pytest.mark.parametrize(
     ("fixture", "message"), [("error_quota", "Quota limit exceeded"), ("error_empty", "Error")]
 )
