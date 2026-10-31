@@ -41,7 +41,7 @@ class WatchPagination(PageNumberPagination):
 class WatchViewSet(viewsets.ModelViewSet[Watch]):
     """CRUD de vigilancias e historial de comprobaciones. / Watch CRUD and check history."""
 
-    queryset = Watch.objects.all()
+    queryset = Watch.objects.prefetch_related("watch_artists__artist")
     serializer_class = WatchSerializer
     pagination_class = WatchPagination
 
