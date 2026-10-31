@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { flushPromises } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { createMemoryHistory, createRouter, type RouteLocationNormalized } from 'vue-router'
 
 import { navEntries } from '../components/nav-meta'
@@ -38,6 +38,11 @@ async function click(wrapper: Wrapper, text: string, row?: number): Promise<void
   await flushPromises()
 }
 
+// Guardar encadena dos peticiones (guardar y recargar la lista): un solo flush no basta
+// en una máquina lenta, así que se espera al aviso.
+const saved = (w: Wrapper, text: string) =>
+  vi.waitFor(() => expect(w.get('[role="status"]').text()).toBe(text))
+
 const rows = (w: Wrapper) => w.findAll('tbody tr').map((r) => r.findAll('td').map((c) => c.text()))
 
 describe('ProxiesView', () => {
@@ -73,7 +78,7 @@ describe('ProxiesView', () => {
     await flushPromises()
     expect(sent).toEqual({ url: 'https://nuevo.example:8080', enabled: true })
     expect(wrapper.find('dialog[open]').exists()).toBe(false)
-    expect(wrapper.get('[role="status"]').text()).toBe('Proxy añadido.')
+    await saved(wrapper, 'Proxy añadido.')
   })
 
   it('cierra los diálogos sin guardar ni borrar', async () => {
@@ -93,7 +98,7 @@ describe('ProxiesView', () => {
     await wrapper.get('form[name="proxy"] input[type="checkbox"]').setValue(false)
     await wrapper.get('form[name="proxy"]').trigger('submit')
     await flushPromises()
-    expect(wrapper.get('[role="status"]').text()).toBe('Proxy añadido.')
+    await saved(wrapper, 'Proxy añadido.')
   })
 
   it('edita un proxy con sus datos ya cargados', async () => {
@@ -113,7 +118,7 @@ describe('ProxiesView', () => {
     await wrapper.get('form[name="proxy"]').trigger('submit')
     await flushPromises()
     expect(sent).toEqual({ url: 'socks5://socks.example:1080', enabled: true })
-    expect(wrapper.get('[role="status"]').text()).toBe('Proxy guardado.')
+    await saved(wrapper, 'Proxy guardado.')
   })
 
   it('muestra el error de validación junto a la dirección y deja el formulario abierto', async () => {
@@ -147,7 +152,7 @@ describe('ProxiesView', () => {
     expect(rows(wrapper)[0]?.[1]).toBe('Inactivo')
     await click(wrapper, 'Activar', 1)
     expect(rows(wrapper)[1]?.[1]).toBe('Activo')
-    expect(wrapper.get('[role="status"]').text()).toBe('Proxy guardado.')
+    await saved(wrapper, 'Proxy guardado.')
   })
 
   it('borra un proxy tras confirmarlo', async () => {
