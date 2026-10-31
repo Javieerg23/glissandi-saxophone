@@ -1,0 +1,22 @@
+{
+  "utilities": {
+    "nav": "Utilities",
+    "title": "Utilities",
+    "intro": "Review the downloaded library. No operation deletes anything.",
+    "operations": "Operations",
+    "operation": {
+      "retag": "Retag the downloaded files",
+      "check_files": "Check the files are still on disk",
+      "review_artists": "Review each track's artists against Deezer"
+    },
+    "start": "Run",
+    "summary": {
+      "title": "Summary",
+      "retag": "Files retagged: {retagged}. Failed: {failed}.",
+      "check_files": "Files checked: {checked}. Missing: {missing}.",
+      "missing": "Downloads without a file: {ids}.",
+      "review_artists": "Tracks reviewed: {reviewed}. With differences: {differences}. No answer from Deezer: {errors}."
+    },
+    "backup": "Library backup"
+  }
+}
