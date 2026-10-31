@@ -184,6 +184,15 @@ describe('LibraryView', () => {
     await vi.waitFor(() => expect(router.currentRoute.value.fullPath).toBe(to))
   })
 
+  // Así enlaza el Registro: con el id numérico tal cual viene de la API.
+  it('acepta el id como número al navegar por nombre', async () => {
+    const { router } = await mount('/panel')
+    await router.push({ name: 'library', query: { tab: 'albums', id: 10, panel: 'history' } })
+    await vi.waitFor(() =>
+      expect(router.currentRoute.value.fullPath).toBe('/biblioteca/albums/10#historial'),
+    )
+  })
+
   it('formatea la duración y deja vacía la desconocida', () => {
     expect([duration(65), duration(null)]).toEqual(['1:05', ''])
   })
