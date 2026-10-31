@@ -61,7 +61,14 @@ describe('LibraryItemView', () => {
     expect(wrapper.get('.item__downloaded').text()).toBe('Sí')
     expect(link(wrapper, 'Pharrell Williams')?.attributes('href')).toBe('/biblioteca/artists/2')
     expect(link(wrapper, 'Ver el álbum')?.attributes('href')).toBe('/biblioteca/albums/10')
-    // Sin la vista de subida en el router, no hay enlace.
+  })
+
+  it('no enlaza a la subida de audio sin esa ruta', async () => {
+    const { wrapper, router } = await open('/biblioteca/tracks/100')
+    // La subida es otra vista: puede estar ya en el router o no.
+    if (router.hasRoute('track-upload')) router.removeRoute('track-upload')
+    await router.push('/biblioteca/tracks/101')
+    await vi.waitFor(() => expect(wrapper.find('h1').text()).toBe('Giorgio by Moroder'))
     expect(link(wrapper, 'Subir audio')).toBeUndefined()
   })
 
