@@ -37,17 +37,19 @@ describe('FolderImportView', () => {
   })
 
   it('muestra el código del motivo si no tiene traducción', async () => {
+    const run = {
+      id: 30,
+      kind: 'folder_import',
+      status: 'succeeded',
+      done: 1,
+      total: 1,
+      current: '',
+      summary: { linked: 1, unlinked: [{ file: 'a.mp3', reason: 'nuevo' }] },
+    }
+    // El alta también devuelve la ejecución: si no, la vista pinta antes el resumen por defecto.
     server.use(
-      http.get('/api/v1/jobs/runs/30/', () =>
-        HttpResponse.json({
-          id: 30,
-          status: 'succeeded',
-          done: 1,
-          total: 1,
-          current: '',
-          summary: { linked: 1, unlinked: [{ file: 'a.mp3', reason: 'nuevo' }] },
-        }),
-      ),
+      http.post('/api/v1/jobs/runs/', () => HttpResponse.json(run, { status: 201 })),
+      http.get('/api/v1/jobs/runs/30/', () => HttpResponse.json(run)),
     )
     const wrapper = await launch('')
     await vi.waitFor(() => expect(wrapper.find('tbody tr').exists()).toBe(true))
