@@ -4,7 +4,7 @@ import type { components } from '../../api/schema'
 
 type Track = components['schemas']['Track']
 
-const track = (id: number, downloaded: boolean): Track => ({
+const track = (id: number): Track => ({
   id,
   album: 1,
   title: 'One More Time',
@@ -13,17 +13,14 @@ const track = (id: number, downloaded: boolean): Track => ({
   duration: 320,
   isrc: null,
   artists: [],
-  downloaded,
+  downloaded: true,
   deezer_id: 3135556,
   musicbrainz_id: null,
 })
 
-/** Subida manual de audio. */
+/** Subida manual de audio; el detalle de la canción lo simula `library.ts`. */
 export default [
-  http.get('/api/v1/catalog/tracks/:id/', ({ params }) =>
-    HttpResponse.json(track(Number(params.id), false)),
-  ),
   http.post('/api/v1/catalog/tracks/:id/upload/', ({ params }) =>
-    HttpResponse.json(track(Number(params.id), true), { status: 201 }),
+    HttpResponse.json(track(Number(params.id)), { status: 201 }),
   ),
 ]

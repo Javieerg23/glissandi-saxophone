@@ -8,7 +8,7 @@ import { server } from '../mocks/server'
 import TrackUploadView from '../views/TrackUploadView.vue'
 import { mountView } from './viewHelpers'
 
-const URL = '/api/v1/catalog/tracks/7/upload/'
+const URL = '/api/v1/catalog/tracks/101/upload/'
 
 async function choose(wrapper: Awaited<ReturnType<typeof mountView>>['wrapper'], name = 'a.wav') {
   const input = wrapper.get('input[type="file"]')
@@ -20,9 +20,9 @@ async function choose(wrapper: Awaited<ReturnType<typeof mountView>>['wrapper'],
 
 describe('TrackUploadView', () => {
   it('muestra la canción y no deja enviar sin fichero', async () => {
-    const { wrapper } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { wrapper } = await mountView(TrackUploadView, '/canciones/101/subir')
     expect(wrapper.get('h1').text()).toBe('Subir audio')
-    expect(wrapper.text()).toContain('One More Time')
+    expect(wrapper.text()).toContain('Giorgio by Moroder')
     expect(wrapper.get('button[type="submit"]').attributes('disabled')).toBeDefined()
   })
 
@@ -31,7 +31,7 @@ describe('TrackUploadView', () => {
     const listen = ({ request }: { request: Request }) => void sent.push(request.clone())
     server.events.on('request:start', listen)
     document.cookie = 'csrftoken=abc'
-    const { wrapper } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { wrapper } = await mountView(TrackUploadView, '/canciones/101/subir')
     await choose(wrapper, 'grabación.wav')
     await wrapper.get('form').trigger('submit')
     await vi.waitFor(() => expect(wrapper.find('[role="status"]').exists()).toBe(true))
@@ -45,7 +45,7 @@ describe('TrackUploadView', () => {
   })
 
   it('no envía nada si se quita el fichero elegido', async () => {
-    const { wrapper } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { wrapper } = await mountView(TrackUploadView, '/canciones/101/subir')
     await choose(wrapper)
     const input = wrapper.get('input[type="file"]')
     Object.defineProperty(input.element, 'files', { value: [] })
@@ -67,7 +67,7 @@ describe('TrackUploadView', () => {
       send() {}
     }
     vi.stubGlobal('XMLHttpRequest', FakeXhr)
-    const { wrapper } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { wrapper } = await mountView(TrackUploadView, '/canciones/101/subir')
     await choose(wrapper)
     await wrapper.get('form').trigger('submit')
     const bar = () => wrapper.get('[role="progressbar"]').attributes('aria-valuenow')
@@ -88,7 +88,7 @@ describe('TrackUploadView', () => {
         return HttpResponse.json({ id: 7, downloaded: true }, { status: 201 })
       }),
     )
-    const { wrapper } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { wrapper } = await mountView(TrackUploadView, '/canciones/101/subir')
     await choose(wrapper)
     await wrapper.get('form').trigger('submit')
     await flushPromises()
@@ -104,7 +104,7 @@ describe('TrackUploadView', () => {
         HttpResponse.json({ file: ['El fichero no es un audio válido.'] }, { status: 400 }),
       ),
     )
-    const { wrapper } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { wrapper } = await mountView(TrackUploadView, '/canciones/101/subir')
     await choose(wrapper, 'notas.txt')
     await wrapper.get('form').trigger('submit')
     await vi.waitFor(() => expect(wrapper.find('[role="alert"]').exists()).toBe(true))
@@ -113,7 +113,7 @@ describe('TrackUploadView', () => {
 
   it('muestra un error genérico si el servidor no explica el fallo', async () => {
     server.use(http.post(URL, () => new HttpResponse('boom', { status: 500 })))
-    const { wrapper } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { wrapper } = await mountView(TrackUploadView, '/canciones/101/subir')
     await choose(wrapper)
     await wrapper.get('form').trigger('submit')
     await vi.waitFor(() => expect(wrapper.find('[role="alert"]').exists()).toBe(true))
@@ -124,7 +124,7 @@ describe('TrackUploadView', () => {
 
   it('avisa si no hay conexión', async () => {
     server.use(http.post(URL, () => HttpResponse.error()))
-    const { wrapper } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { wrapper } = await mountView(TrackUploadView, '/canciones/101/subir')
     await choose(wrapper)
     await wrapper.get('form').trigger('submit')
     await vi.waitFor(() => expect(wrapper.find('[role="alert"]').exists()).toBe(true))
@@ -137,12 +137,12 @@ describe('TrackUploadView', () => {
         HttpResponse.json({ detail: 'No encontrado.' }, { status: 404 }),
       ),
     )
-    const { wrapper } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { wrapper } = await mountView(TrackUploadView, '/canciones/101/subir')
     expect(wrapper.get('[role="alert"]').text()).toBe('No encontrado.')
   })
 
   it('es solo para administradores y no sale en la navegación', async () => {
-    const { router } = await mountView(TrackUploadView, '/canciones/7/subir')
+    const { router } = await mountView(TrackUploadView, '/canciones/101/subir')
     const route = router.resolve({ name: 'track-upload', params: { id: 7 } })
     expect(route.path).toBe('/canciones/7/subir')
     expect(route.meta.adminOnly).toBe(true)
