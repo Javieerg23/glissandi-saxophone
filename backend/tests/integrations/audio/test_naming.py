@@ -47,3 +47,14 @@ def test_long_names_are_cut_without_splitting_characters() -> None:
 def test_unknown_placeholder() -> None:
     with pytest.raises(KeyError):
         render_path("{nope}", TAGS, "mp3")
+
+
+@pytest.mark.parametrize(("length", "kept"), [(120, 120), (121, 120)])
+def test_names_are_cut_at_exactly_120_bytes(length: int, kept: int) -> None:
+    name = render_path("{title}", Tags(title="a" * length, artists=("A",)), "mp3").stem
+    assert name == "a" * kept
+
+
+def test_only_spaces_and_dots_are_trimmed() -> None:
+    tags = Tags(title="Malcolm X", artists=("A",))
+    assert render_path("{title}", tags, "mp3") == PurePosixPath("Malcolm X.mp3")

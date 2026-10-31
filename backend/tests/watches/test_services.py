@@ -9,6 +9,7 @@ import requests
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+from activity.models import ActivityLog
 from catalog.factories import ArtistFactory
 from catalog.models import Album, BlockedItem, Track
 from integrations.deezer.models import Album as RemoteAlbum
@@ -220,3 +221,60 @@ def test_task_stops_between_watches(fake_deezer: None, monkeypatch: pytest.Monke
     monkeypatch.setattr(runner, "should_stop", lambda run: True)
     run = runner.start("watch_check", {}, None)
     assert run.summary["checked"] == 0 and not WatchRun.objects.exists()
+
+
+class DetailedDeezer(FakeDeezer):
+    """Canciones en dos páginas con todos los datos. / Tracks over two pages, every field set."""
+
+    def album_tracks(self, album: RemoteAlbum, index: int = 0) -> Page[RemoteTrack]:
+        """Una canción por página. / One track per page."""
+        artists = (ArtistRef("Main", 1), ArtistRef("Second", 2))
+        tracks = [
+            RemoteTrack(501, "Uno", artists, duration=200, track_position=3, disk_number=2),
+            RemoteTrack(502, "Dos", artists[:1]),
+        ]
+        return Page(tuple(tracks[index : index + 1]), 2, 1 if index == 0 else None)
+
+
+def test_check_copies_album_and_track_data_and_counts_every_album(
+    downloads: list[dict[str, Any]],
+) -> None:
+    watch = _watch(1, 2, auto_download=True)
+    user = User.objects.create_user("ana")
+    album = RemoteAlbum(
+        12, "Nuevo", (ArtistRef("Main", 1), ArtistRef("Second", 2)), date(2026, 3, 4),
+        cover_url="https://img/c.jpg",
+    )  # fmt: skip
+    client = DetailedDeezer({1: [album, _album(13, 1)]})
+
+    run = services.check_watch(watch, user=user, client=client)
+
+    assert run.found == 2 and run.started_at <= run.finished_at
+    saved = Album.objects.get(deezer_id=12)
+    assert (saved.title, saved.release_date, saved.cover_url) == (
+        "Nuevo", date(2026, 3, 4), "https://img/c.jpg",
+    )  # fmt: skip
+    assert list(saved.credits.values_list("artist__deezer_id", "position")) == [(1, 0), (2, 1)]
+    first, second = Track.objects.filter(album=saved).order_by("deezer_id")
+    assert (first.title, first.track_number, first.disc_number, first.duration) == (
+        "Uno",
+        3,
+        2,
+        200,
+    )
+    assert (second.track_number, second.disc_number, second.duration) == (1, 1, None)
+    assert list(first.credits.values_list("artist__deezer_id", "position")) == [(1, 0), (2, 1)]
+    # Solo el primer álbum trae canciones nuevas: el segundo repite los mismos id.
+    assert len(downloads[0]["track_ids"]) == 2
+    log = ActivityLog.objects.get(action="watches.watch.checked")
+    assert (log.username, log.object_id, log.detail) == (
+        "ana", str(watch.pk), {"status": "succeeded", "albums": 2},
+    )  # fmt: skip
+
+
+def test_launch_due_ignores_disabled_watches(monkeypatch: pytest.MonkeyPatch) -> None:
+    started: list[str] = []
+    monkeypatch.setattr(runner, "start", lambda kind, params, user: started.append(kind))
+    Watch.objects.create(name="off", enabled=False)
+    services.launch_due()
+    assert started == []

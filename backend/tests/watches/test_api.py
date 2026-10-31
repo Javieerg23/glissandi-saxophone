@@ -38,7 +38,9 @@ def test_creates_lists_and_logs(client_logged: APIClient) -> None:
     assert response.status_code == 201
     assert response.json()["enabled"] is True
     assert client_logged.get(URL).json()["results"][0]["name"] == "Novedades"
-    assert ActivityLog.objects.filter(action="watches.created").exists()
+    assert ActivityLog.objects.filter(
+        action="watches.created", username="pepe", object_id=str(response.json()["id"])
+    ).exists()
 
 
 def test_duplicate_name_is_rejected(client_logged: APIClient, watch: Watch) -> None:
@@ -49,13 +51,17 @@ def test_duplicate_name_is_rejected(client_logged: APIClient, watch: Watch) -> N
 def test_updates_enabled_flag(client_logged: APIClient, watch: Watch) -> None:
     response = client_logged.patch(f"{URL}{watch.pk}/", {"enabled": False}, format="json")
     assert response.json()["enabled"] is False
-    assert ActivityLog.objects.filter(action="watches.updated").exists()
+    assert ActivityLog.objects.filter(
+        action="watches.updated", username="pepe", object_id=str(watch.pk)
+    ).exists()
 
 
 def test_deletes_a_watch_without_checks(client_logged: APIClient, watch: Watch) -> None:
     assert client_logged.delete(f"{URL}{watch.pk}/").status_code == 204
     assert not Watch.objects.exists()
-    assert ActivityLog.objects.filter(action="watches.deleted").exists()
+    assert ActivityLog.objects.filter(
+        action="watches.deleted", username="pepe", object_id=str(watch.pk)
+    ).exists()
 
 
 def test_refuses_to_delete_a_watch_with_checks(client_logged: APIClient, watch: Watch) -> None:

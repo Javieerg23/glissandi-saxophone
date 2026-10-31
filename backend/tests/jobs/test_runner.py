@@ -129,6 +129,17 @@ def test_stop_pending_run_closes_it_and_the_queue_skips_it() -> None:
     assert run.summary == {} and run.status == JobRun.Status.STOPPED
 
 
+def test_executing_a_run_leaves_other_queued_runs_alone() -> None:
+    """Cada hilo reclama solo su ejecución; las demás siguen en cola."""
+    registry.register("demo")(lambda run, params: None)
+    registry.register("other")(lambda run, params: None)
+    run = JobRun.objects.create(kind="demo")
+    queued = JobRun.objects.create(kind="other")
+    runner._execute(run.pk)
+    queued.refresh_from_db()
+    assert queued.status == JobRun.Status.PENDING
+
+
 def test_stop_closed_run_raises() -> None:
     registry.register("demo")(lambda run, params: None)
     run = runner.start("demo", None, None)

@@ -356,3 +356,12 @@ def test_task_imports_logs_activity_and_reports_summary(
 def test_task_rejects_invalid_params(params: dict[str, Any]) -> None:
     run = runner.start("import", params, None)
     assert run.status == JobRun.Status.FAILED
+
+
+def test_block_applies_only_to_its_own_kind(run: JobRun, deezer: FakeDeezer) -> None:
+    """Un id bloqueado de un tipo no bloquea a otro tipo con el mismo id."""
+    BlockedItem.objects.create(kind="track", deezer_id=1)
+    BlockedItem.objects.create(kind="artist", deezer_id=10)
+    _import(run, deezer, [1])
+    assert Artist.objects.filter(deezer_id=1).exists()
+    assert Album.objects.filter(deezer_id=10).exists()

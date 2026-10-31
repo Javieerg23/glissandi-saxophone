@@ -49,7 +49,9 @@ def test_admin_creates_and_lists_proxies(admin: APIClient) -> None:
     response = admin.post(URL, {"url": PROXY}, format="json")
     assert response.status_code == 201
     assert admin.get(URL).json()[0]["url"] == PROXY
-    assert ActivityLog.objects.filter(action="proxies.created").exists()
+    assert ActivityLog.objects.filter(
+        action="proxies.created", username="admin", object_id=str(response.json()["id"])
+    ).exists()
 
 
 def test_counters_are_read_only(admin: APIClient) -> None:
@@ -68,8 +70,10 @@ def test_admin_updates_and_deletes(admin: APIClient, proxy: Proxy) -> None:
     assert response.json()["enabled"] is False
     assert admin.delete(f"{URL}{proxy.pk}/").status_code == 204
     assert not Proxy.objects.exists()
-    assert ActivityLog.objects.filter(action="proxies.updated").exists()
-    assert ActivityLog.objects.filter(action="proxies.deleted").exists()
+    for action in ("proxies.updated", "proxies.deleted"):
+        assert ActivityLog.objects.filter(
+            action=action, username="admin", object_id=str(proxy.pk)
+        ).exists()
 
 
 @responses.activate

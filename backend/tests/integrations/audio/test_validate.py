@@ -56,3 +56,13 @@ def test_mutagen_error_is_wrapped(wav: Path, monkeypatch: pytest.MonkeyPatch) ->
     monkeypatch.setattr(mutagen, "File", boom)
     with pytest.raises(InvalidAudio, match="readable"):
         validate_audio(wav)
+
+
+def test_size_limit_is_inclusive(wav: Path) -> None:
+    assert validate_audio(wav, max_bytes=wav.stat().st_size).size == wav.stat().st_size
+
+
+def test_unrecognized_audio_is_rejected(wav: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(mutagen, "File", lambda path: None)
+    with pytest.raises(InvalidAudio, match="readable"):
+        validate_audio(wav)

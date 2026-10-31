@@ -14,7 +14,7 @@ from rest_framework.test import APIClient
 
 from accounts.roles import ADMIN_GROUP, USER_GROUP
 from activity.models import ActivityLog
-from catalog.backup import LIBRARY_MODELS, UPLOAD_PREFIX
+from catalog.backup import LIBRARY_MODELS, UPLOAD_PREFIX, BackupError, upload_path
 from catalog.factories import ArtistFactory, DownloadFactory, TrackArtistFactory, TrackFactory
 from catalog.models import Artist, BlockedItem, Download, Track
 from jobs import runner
@@ -218,3 +218,17 @@ def test_restore_while_another_runs_is_a_conflict(admin: APIClient, upload_dir: 
 def test_task_rejects_files_outside_its_uploads(admin_user: User, name: Any) -> None:
     run = runner.start("library_restore", {"file": name}, admin_user)
     assert run.status == JobRun.Status.FAILED
+
+
+@pytest.mark.parametrize(
+    "name", [5, "otro.json", f"{UPLOAD_PREFIX}x/../../etc/passwd", f"/var/{UPLOAD_PREFIX}x.json"]
+)
+def test_upload_path_only_accepts_upload_names(name: object) -> None:
+    """La tarea solo abre ficheros de la carpeta temporal con el prefijo de subida."""
+    with pytest.raises(BackupError):
+        upload_path(name)
+
+
+def test_upload_path_stays_in_the_temp_folder() -> None:
+    name = f"{UPLOAD_PREFIX}abc.json"
+    assert upload_path(name) == Path(tempfile.gettempdir()) / name

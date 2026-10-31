@@ -42,7 +42,13 @@ def test_mp3_full(wav: Path, tmp_path: Path) -> None:
     assert id3["TPOS"].text == ["2"]
     assert str(id3["TDRC"].text[0]) == "1999"
     assert id3["TSRC"].text == ["USRC17607839"]
-    assert id3["APIC:Cover"].mime == "image/jpeg"
+    assert (id3["APIC:Cover"].mime, id3["APIC:Cover"].type, id3["APIC:Cover"].data) == (
+        "image/jpeg",
+        3,
+        JPEG,
+    )
+    # UTF-8 en todos los marcos de texto: algunos reproductores no leen bien UTF-16.
+    assert {frame.encoding for frame in id3.values()} == {3}
 
 
 def test_mp3_minimal_replaces_previous_cover(wav: Path, tmp_path: Path) -> None:
@@ -61,10 +67,12 @@ def test_flac_full_and_minimal(wav: Path, tmp_path: Path) -> None:
     assert flac["artist"] == ["A", "B"]
     assert flac["isrc"] == ["USRC17607839"]
     assert flac["tracknumber"] == ["3"] and flac["discnumber"] == ["2"] and flac["date"] == ["1999"]
-    assert flac.pictures[0].mime == "image/jpeg"
+    assert flac["album"] == ["Album"]
+    assert (flac.pictures[0].mime, flac.pictures[0].type) == ("image/jpeg", 3)
     write_tags(path, MINIMAL)
     flac = FLAC(path)
     assert flac["title"] == ["Song"] and "album" not in flac and not flac.pictures
+    assert not {"tracknumber", "discnumber", "date", "isrc"} & set(flac.keys())
 
 
 def test_opus_full_and_minimal(wav: Path, tmp_path: Path) -> None:

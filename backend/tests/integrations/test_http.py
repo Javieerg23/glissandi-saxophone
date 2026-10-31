@@ -2,6 +2,7 @@
 
 from typing import Any
 
+import pytest
 import responses
 from requests.adapters import HTTPAdapter
 
@@ -48,3 +49,22 @@ def test_retries_only_idempotent_methods_on_transient_errors() -> None:
     assert retry.total == 3
     assert 503 in retry.status_forcelist
     assert retry.allowed_methods == ("GET", "HEAD")
+
+
+@responses.activate
+def test_forwards_tls_and_proxy_options(monkeypatch: pytest.MonkeyPatch) -> None:
+    """El adaptador pasa todo lo demás tal cual: perder ``verify`` desactivaría TLS."""
+    for name in ("REQUESTS_CA_BUNDLE", "CURL_CA_BUNDLE"):
+        monkeypatch.delenv(name, raising=False)
+    responses.get("https://api.example.test/x", json={})
+    session = build_session()
+    session.get("https://api.example.test/x")
+    assert getattr(responses.calls[-1].request, "req_kwargs")["verify"] is True  # noqa: B009
+
+    proxies = {"https": "http://proxy.test:3128"}
+    session.get(
+        "https://api.example.test/x", stream=True, verify="/ca.pem", cert="c.pem", proxies=proxies
+    )
+    sent = getattr(responses.calls[-1].request, "req_kwargs")  # noqa: B009
+    assert (sent["stream"], sent["verify"], sent["cert"]) == (True, "/ca.pem", "c.pem")
+    assert sent["proxies"]["https"] == "http://proxy.test:3128"

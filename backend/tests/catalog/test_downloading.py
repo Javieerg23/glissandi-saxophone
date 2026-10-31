@@ -1,5 +1,6 @@
 """Tests de la tarea de descarga, con yt-dlp y ffmpeg simulados. / Download task tests."""
 
+import time
 from pathlib import Path
 from typing import Any
 
@@ -24,14 +25,16 @@ def fake_media(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> dict[str, Any
 
     Replaces yt-dlp, ffmpeg and mutagen; returns what they were asked.
     """
-    calls: dict[str, Any] = {"proxies": [], "tagged": []}
+    calls: dict[str, Any] = {"proxies": [], "tagged": [], "searched": [], "fetched": []}
     Preference.objects.create(key="download.folder", value=str(tmp_path / "library"))
 
     def find(title: str, artists: list[str], duration: float, *, proxy: str | None) -> VideoMatch:
         calls["proxies"].append(proxy)
+        calls["searched"].append((title, artists, duration))
         return VideoMatch("abcdefghijk", title, duration)
 
     def fetch(video_id: str, dest_dir: Path, *, proxy: str | None) -> Path:
+        calls["fetched"].append((video_id, proxy))
         raw = dest_dir / f"{video_id}.webm"
         raw.write_bytes(b"raw")
         return raw
@@ -44,7 +47,9 @@ def fake_media(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> dict[str, Any
     monkeypatch.setattr(downloading, "find_best_video", find)
     monkeypatch.setattr(downloading, "download_audio", fetch)
     monkeypatch.setattr(downloading, "convert", to_format)
-    monkeypatch.setattr(downloading, "write_tags", lambda path, tags: calls["tagged"].append(tags))
+    monkeypatch.setattr(
+        downloading, "write_tags", lambda path, tags: calls["tagged"].append((path.name, tags))
+    )
     return calls
 
 
@@ -64,7 +69,9 @@ def test_downloads_converts_tags_and_records(fake_media: dict[str, Any], tmp_pat
     assert Path(download.file_path).name.endswith("Song.mp3")
     assert download.audio_format == "mp3"
     assert download.source_url == "https://www.youtube.com/watch?v=abcdefghijk"
-    assert fake_media["tagged"][0].title == "Song"
+    assert fake_media["tagged"][0][0] == "abcdefghijk.mp3"
+    assert fake_media["tagged"][0][1].title == "Song"
+    assert fake_media["searched"] == [("Song", list(fake_media["tagged"][0][1].artists), 200.0)]
     assert ActivityLog.objects.filter(action="catalog.download.finished").exists()
 
 
@@ -129,6 +136,7 @@ def test_proxy_counters_on_success_and_failure(
     assert (proxy.success_count, proxy.failure_count) == (1, 0)
     assert proxy.last_used_at is not None
     assert fake_media["proxies"] == ["http://proxy:3128"]
+    assert fake_media["fetched"] == [("abcdefghijk", "http://proxy:3128")]
 
     def boom(*args: Any, **kwargs: Any) -> Path:
         raise YoutubeError("blocked")
@@ -185,3 +193,19 @@ def test_youtube_failure_without_proxies_is_reported(monkeypatch: pytest.MonkeyP
     monkeypatch.setattr(downloading, "download_audio", boom)
     run = _run(track_ids=[TrackFactory(duration=200).pk])
     assert run.summary["failed"] == 1
+
+
+def test_youtube_failure_cools_the_proxy_down(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tras un fallo de red el mismo proxy no se reutiliza enseguida."""
+    Proxy.objects.create(url="http://proxy:3128")
+    pool = downloading.build_pool()
+
+    def boom(*args: Any, **kwargs: Any) -> Path:
+        raise YoutubeError("blocked")
+
+    monkeypatch.setattr(downloading, "download_audio", boom)
+    track = TrackFactory(duration=200)
+    with pytest.raises(YoutubeError):
+        downloading.download_track(track, pool, fmt="mp3", folder=Path("x"), template="{title}")
+    with pytest.raises(NoProxyAvailable):
+        pool.acquire(time.monotonic())

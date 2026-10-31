@@ -122,7 +122,11 @@ def test_edit_changes_mutable_and_ignores_immutable(admin: APIClient) -> None:
         None,
     )
     entry = ActivityLog.objects.get(action="catalog.track.updated")
-    assert entry.detail == {"fields": ["title"]}
+    assert (entry.username, entry.object_id, entry.detail) == (
+        "admin",
+        str(track.pk),
+        {"fields": ["title"]},
+    )
 
 
 def test_edit_validates(admin: APIClient) -> None:
@@ -210,9 +214,12 @@ def test_block_list_and_unblock(admin: APIClient) -> None:
     assert admin.get(f"{BASE}/blocked/?search=mal").data["count"] == 1
     assert admin.delete(f"{BASE}/blocked/{created.data['id']}/").status_code == 204
     assert not BlockedItem.objects.exists()
-    assert list(ActivityLog.objects.order_by("id").values_list("action", flat=True)) == [
-        "catalog.blocked.added",
-        "catalog.blocked.removed",
+    entry = {"object_id": str(created.data["id"]), "detail": {"kind": "album", "deezer_id": 9}}
+    assert list(
+        ActivityLog.objects.order_by("id").values("action", "username", "object_id", "detail")
+    ) == [
+        {"action": "catalog.blocked.added", "username": "admin", **entry},
+        {"action": "catalog.blocked.removed", "username": "admin", **entry},
     ]
 
 
