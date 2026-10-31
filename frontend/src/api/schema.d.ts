@@ -414,6 +414,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/catalog/backup/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Copia completa de la biblioteca (``dumpdata``), como fichero adjunto. / Full library backup (``dumpdata``) as an attachment. */
+        get: operations["v1_catalog_backup_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/backup/preview/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Cuenta lo que trae la copia y lo que ya existe; no cambia nada. / Counts what the backup holds and what already exists; changes nothing. */
+        post: operations["v1_catalog_backup_preview_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/backup/restore/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Valida la copia y lanza la tarea ``library_restore``, que añade lo que falta sin reescribir lo que ya existe. / Validates the backup and starts the ``library_restore`` task, which adds what is missing without rewriting existing rows. */
+        post: operations["v1_catalog_backup_restore_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/catalog/blocked/": {
         parameters: {
             query?: never;
@@ -880,6 +931,27 @@ export interface components {
         ArtistRequest: {
             name: string;
             image_url?: string;
+        };
+        /** @description Elementos de un tipo en la copia. / Items of one kind in the backup. */
+        BackupCount: {
+            total: number;
+            /** @description Ya en la biblioteca. / Already in the library. */
+            existing: number;
+        };
+        /** @description Vista previa de una copia. / Backup preview. */
+        BackupPreview: {
+            artists: components["schemas"]["BackupCount"];
+            albums: components["schemas"]["BackupCount"];
+            tracks: components["schemas"]["BackupCount"];
+            downloads: components["schemas"]["BackupCount"];
+        };
+        /** @description Fichero de copia subido. / Uploaded backup file. */
+        BackupUploadRequest: {
+            /**
+             * Format: binary
+             * @description JSON exportado. / Exported JSON.
+             */
+            file: string;
         };
         /** @description Elemento bloqueado; un bloqueo por tipo e identificador. / Blocked item. */
         BlockedItem: {
@@ -2299,6 +2371,123 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Artist"];
+                };
+            };
+        };
+    };
+    v1_catalog_backup_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Fichero de copia. / Backup file. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_catalog_backup_preview_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["BackupUploadRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BackupPreview"];
+                };
+            };
+            /** @description Fichero no válido. / Invalid file. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+        };
+    };
+    v1_catalog_backup_restore_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["BackupUploadRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobRun"];
+                };
+            };
+            /** @description Fichero no válido. / Invalid file. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            /** @description Ya hay otra en curso. / Another one is running. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
                 };
             };
         };

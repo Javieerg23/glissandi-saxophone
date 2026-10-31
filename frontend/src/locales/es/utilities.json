@@ -1,0 +1,22 @@
+{
+  "utilities": {
+    "nav": "Utilidades",
+    "title": "Utilidades",
+    "intro": "Revisa la biblioteca descargada. Ninguna operación borra nada.",
+    "operations": "Operaciones",
+    "operation": {
+      "retag": "Volver a etiquetar los ficheros descargados",
+      "check_files": "Comprobar que los ficheros siguen en disco",
+      "review_artists": "Revisar los artistas de cada canción con Deezer"
+    },
+    "start": "Ejecutar",
+    "summary": {
+      "title": "Resumen",
+      "retag": "Ficheros etiquetados: {retagged}. Fallidos: {failed}.",
+      "check_files": "Ficheros comprobados: {checked}. Faltan: {missing}.",
+      "missing": "Descargas sin fichero: {ids}.",
+      "review_artists": "Canciones revisadas: {reviewed}. Con diferencias: {differences}. Sin respuesta de Deezer: {errors}."
+    },
+    "backup": "Copia de la biblioteca"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "settings": {
+    "nav": "Settings",
+    "title": "Global settings",
+    "accountLink": "Your personal settings are in My account.",
+    "format": "Download format",
+    "folder": "Download folder",
+    "template": "Naming template",
+    "templateHint": "Use / to separate folders. Placeholders: {placeholders}.",
+    "save": "Save settings",
+    "saved": "Settings saved."
+  },
+  "users": {
+    "nav": "Users",
+    "title": "Users",
+    "columns": {
+      "username": "Username",
+      "role": "Role",
+      "lastLogin": "Last sign-in",
+      "actions": "Actions"
+    },
+    "inactive": "(deactivated)",
+    "never": "Never",
+    "roleOf": "Role of {username}",
+    "activate": "Reactivate",
+    "deactivate": "Deactivate",
+    "created": "User {username} created.",
+    "updated": "User {username} updated.",
+    "new": {
+      "title": "New user",
+      "username": "Username",
+      "password": "Password",
+      "role": "Role",
+      "submit": "Create user"
+    }
+  }
+}
