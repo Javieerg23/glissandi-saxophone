@@ -1,0 +1,37 @@
+{
+  "settings": {
+    "nav": "Ajustes",
+    "title": "Ajustes globales",
+    "accountLink": "Tus ajustes personales están en Mi cuenta.",
+    "format": "Formato de descarga",
+    "folder": "Carpeta de descargas",
+    "template": "Plantilla de nombres",
+    "templateHint": "Usa / para separar carpetas. Marcadores: {placeholders}.",
+    "save": "Guardar ajustes",
+    "saved": "Ajustes guardados."
+  },
+  "users": {
+    "nav": "Usuarios",
+    "title": "Usuarios",
+    "columns": {
+      "username": "Usuario",
+      "role": "Rol",
+      "lastLogin": "Último acceso",
+      "actions": "Acciones"
+    },
+    "inactive": "(desactivado)",
+    "never": "Nunca",
+    "roleOf": "Rol de {username}",
+    "activate": "Reactivar",
+    "deactivate": "Desactivar",
+    "created": "Usuario {username} creado.",
+    "updated": "Usuario {username} actualizado.",
+    "new": {
+      "title": "Nuevo usuario",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "role": "Rol",
+      "submit": "Crear usuario"
+    }
+  }
+}

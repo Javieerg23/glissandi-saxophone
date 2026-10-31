@@ -3,6 +3,7 @@
 from django.urls import URLPattern, URLResolver, path
 from rest_framework.routers import SimpleRouter
 
+from .backup import LibraryBackupPreviewView, LibraryExportView, LibraryRestoreView
 from .upload import TrackUploadView
 from .views import (
     AlbumViewSet,
@@ -23,5 +24,8 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("summary/", LibrarySummaryView.as_view(), name="library-summary"),
     path("deezer/artists/", DeezerArtistSearchView.as_view(), name="deezer-artist-search"),
     path("tracks/<int:pk>/upload/", TrackUploadView.as_view(), name="track-upload"),
+    path("backup/", LibraryExportView.as_view(), name="library-export"),
+    path("backup/preview/", LibraryBackupPreviewView.as_view(), name="library-backup-preview"),
+    path("backup/restore/", LibraryRestoreView.as_view(), name="library-restore"),
     *router.urls,
 ]

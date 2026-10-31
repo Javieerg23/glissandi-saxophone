@@ -1,0 +1,50 @@
+{
+  "proxies": {
+    "nav": "Proxies",
+    "title": "Proxies",
+    "intro": "Downloads go out through the enabled proxies, spread across them.",
+    "add": "Add proxy",
+    "columns": {
+      "url": "Address",
+      "status": "Status",
+      "success": "Successes",
+      "failure": "Failures",
+      "lastUsed": "Last used",
+      "actions": "Actions"
+    },
+    "status": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "never": "Never",
+    "actions": {
+      "edit": "Edit",
+      "enable": "Enable",
+      "disable": "Disable",
+      "check": "Test",
+      "delete": "Delete"
+    },
+    "form": {
+      "createTitle": "New proxy",
+      "editTitle": "Edit proxy",
+      "url": "Address (http, https, socks5 or socks5h)",
+      "enabled": "Enabled",
+      "save": "Save"
+    },
+    "delete": {
+      "title": "Delete proxy",
+      "confirm": "Delete {url}? This cannot be undone.",
+      "submit": "Delete"
+    },
+    "check": {
+      "ok": "{url} works (HTTP {status}).",
+      "failed": "{url} does not respond.",
+      "failedStatus": "{url} responds with an error (HTTP {status})."
+    },
+    "done": {
+      "created": "Proxy added.",
+      "updated": "Proxy saved.",
+      "deleted": "Proxy deleted."
+    }
+  }
+}

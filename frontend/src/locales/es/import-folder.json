@@ -1,0 +1,23 @@
+{
+  "importFolder": {
+    "title": "Importar una carpeta",
+    "intro": "Enlaza con la biblioteca la música que ya tienes descargada. Cada fichero se busca en Deezer por su ISRC o por su artista y su título, y se importa lo que falte. Los ficheros no se mueven ni se modifican.",
+    "folder": "Carpeta",
+    "hint": "Ruta dentro de la carpeta de descargas, por ejemplo «Artista/Álbum». Déjala vacía para recorrerla entera.",
+    "start": "Importar carpeta",
+    "result": "{linked} enlazados, {already} ya estaban enlazados y {unlinked} sin enlazar.",
+    "unlinked": {
+      "title": "Ficheros sin enlazar",
+      "file": "Fichero",
+      "reason": "Motivo"
+    },
+    "reason": {
+      "outside": "Enlace a un fichero fuera de la carpeta de descargas",
+      "unreadable": "No se puede leer el fichero",
+      "no_tags": "Sin etiquetas o sin título",
+      "not_found": "No se ha encontrado en Deezer",
+      "not_in_catalog": "Álbum o canción bloqueados",
+      "error": "Error al consultar Deezer"
+    }
+  }
+}

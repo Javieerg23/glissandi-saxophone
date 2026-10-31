@@ -37,10 +37,12 @@ const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS'])
 
 /**
  * Petición JSON a la API de Django. Con sesión por cookie, Django exige el token
- * CSRF en la cabecera `X-CSRFToken` en todo método que no sea de lectura.
+ * CSRF en la cabecera `X-CSRFToken` en todo método que no sea de lectura. Un cuerpo
+ * `FormData` va como multipart (subida de ficheros) y el navegador pone su Content-Type.
  *
  * JSON request to the Django API. Session cookies require the CSRF token in the
- * `X-CSRFToken` header on every non-read method.
+ * `X-CSRFToken` header on every non-read method. A `FormData` body goes as multipart
+ * (file uploads); the browser sets its Content-Type with the boundary.
  *
  * @throws {ApiError} si no hay red o la respuesta no es 2xx.
  */
@@ -50,7 +52,8 @@ export async function api<T = unknown>(
 ): Promise<T> {
   const method = (init.method ?? 'GET').toUpperCase()
   const headers: Record<string, string> = { Accept: 'application/json' }
-  if (init.body !== undefined) headers['Content-Type'] = 'application/json'
+  const form = init.body instanceof FormData
+  if (init.body !== undefined && !form) headers['Content-Type'] = 'application/json'
   if (!SAFE_METHODS.has(method)) headers['X-CSRFToken'] = csrfToken()
 
   let res: Response
@@ -59,7 +62,11 @@ export async function api<T = unknown>(
       method,
       headers,
       credentials: 'same-origin',
-      body: init.body === undefined ? undefined : JSON.stringify(init.body),
+      body: form
+        ? (init.body as FormData)
+        : init.body === undefined
+          ? undefined
+          : JSON.stringify(init.body),
     })
   } catch {
     throw new ApiError('network', 0)

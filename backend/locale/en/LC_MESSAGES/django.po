@@ -32,3 +32,23 @@ msgstr "The file is not valid audio or is larger than 200 MB."
 
 msgid "No se pudo convertir el audio."
 msgstr "The audio could not be converted."
+
+msgid "El fichero no es JSON válido."
+msgstr "The file is not valid JSON."
+
+msgid "El fichero no es una copia de la biblioteca."
+msgstr "The file is not a library backup."
+
+#, python-format
+msgid "La copia tiene datos no válidos: %(error)s"
+msgstr "The backup holds invalid data: %(error)s"
+
+msgid "Fichero de copia desconocido."
+msgstr "Unknown backup file."
+
+msgid "Solo un administrador puede importar la biblioteca."
+msgstr "Only an administrator can restore the library."
+
+#, python-format
+msgid "%(created)d elementos añadidos, %(skipped)d ya existían."
+msgstr "%(created)d items added, %(skipped)d already existed."
