@@ -50,8 +50,8 @@ describe('FolderImportView', () => {
       ),
     )
     const wrapper = await launch('')
-    await vi.waitFor(() => expect(wrapper.find('tbody tr').exists()).toBe(true))
-    expect(wrapper.get('tbody tr').text()).toContain('nuevo')
+    // El alta simulada ya trae un resumen terminado: hay que esperar al del sondeo.
+    await vi.waitFor(() => expect(wrapper.find('tbody tr').text()).toContain('nuevo'))
     expect(wrapper.text()).toContain('1 enlazados, 0 ya estaban enlazados y 1 sin enlazar.')
   })
 
