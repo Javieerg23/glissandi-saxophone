@@ -122,13 +122,15 @@ describe('pestaña Actividad', () => {
     await fill(wrapper, 'Usuario', 'demo')
     await fill(wrapper, 'Acción', 'blocked')
     await choose(wrapper, 'Tipo de objeto', 'catalog.track')
-    expect(seen.at(-1)).toEqual({
-      date_from: '2026-01-01',
-      date_to: '2026-01-31',
-      username: 'demo',
-      action: 'blocked',
-      object_type: 'catalog.track',
-    })
+    await vi.waitFor(() =>
+      expect(seen.at(-1)).toEqual({
+        date_from: '2026-01-01',
+        date_to: '2026-01-31',
+        username: 'demo',
+        action: 'blocked',
+        object_type: 'catalog.track',
+      }),
+    )
     expect(router.currentRoute.value.query).toMatchObject({
       username: 'demo',
       object_type: 'catalog.track',
@@ -200,7 +202,7 @@ describe('pestaña Actividad', () => {
     expect(previous.attributes('disabled')).toBeDefined()
     await next.trigger('click')
     await flushPromises()
-    expect(seen.at(-1)).toEqual({ page: '2' })
+    await vi.waitFor(() => expect(seen.at(-1)).toEqual({ page: '2' }))
   })
 
   it('vuelve a la página anterior', async () => {
@@ -213,10 +215,12 @@ describe('pestaña Actividad', () => {
     )
     const { wrapper } = await mountLog('/registro?page=2')
     const [previous, next] = wrapper.findAll('.pager button')
+    // «Anterior» se activa al llegar la respuesta; en una máquina lenta, después del montaje.
+    await vi.waitFor(() => expect(previous.attributes('disabled')).toBeUndefined())
     expect(next.attributes('disabled')).toBeDefined()
     await previous.trigger('click')
     await flushPromises()
-    expect(seen.at(-1)).toEqual({ page: '1' })
+    await vi.waitFor(() => expect(seen.at(-1)).toEqual({ page: '1' }))
   })
 
   it('muestra el error de la API', async () => {
@@ -253,12 +257,14 @@ describe('pestaña Tareas', () => {
     await fill(wrapper, 'Desde', '2026-01-01T00:00')
     await fill(wrapper, 'Hasta', '2026-01-02T00:00')
     await flushPromises()
-    expect(seen.at(-1)).toEqual({
-      kind: 'import',
-      status: 'failed',
-      started_after: '2026-01-01T00:00',
-      started_before: '2026-01-02T00:00',
-    })
+    await vi.waitFor(() =>
+      expect(seen.at(-1)).toEqual({
+        kind: 'import',
+        status: 'failed',
+        started_after: '2026-01-01T00:00',
+        started_before: '2026-01-02T00:00',
+      }),
+    )
     expect(router.currentRoute.value.query.tab).toBe('jobs')
   })
 
@@ -321,14 +327,16 @@ describe('pestaña Logs técnicos', () => {
     await fill(wrapper, 'Desde', '2026-01-01')
     await fill(wrapper, 'Hasta', '2026-01-02')
     await flushPromises()
-    expect(seen.at(-1)).toEqual({
-      min_level: '40',
-      module: 'catalog',
-      task: '5',
-      search: 'yt-dlp',
-      date_from: '2026-01-01',
-      date_to: '2026-01-02',
-    })
+    await vi.waitFor(() =>
+      expect(seen.at(-1)).toEqual({
+        min_level: '40',
+        module: 'catalog',
+        task: '5',
+        search: 'yt-dlp',
+        date_from: '2026-01-01',
+        date_to: '2026-01-02',
+      }),
+    )
   })
 
   it('cambiar de pestaña quita los filtros de la anterior', async () => {
