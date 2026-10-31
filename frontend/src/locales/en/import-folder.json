@@ -1,0 +1,23 @@
+{
+  "importFolder": {
+    "title": "Import a folder",
+    "intro": "Links the music you have already downloaded to the library. Each file is looked up on Deezer by its ISRC or by its artist and title, and anything missing is imported. Files are never moved or changed.",
+    "folder": "Folder",
+    "hint": "Path inside the downloads folder, for example “Artist/Album”. Leave it empty to walk the whole folder.",
+    "start": "Import folder",
+    "result": "{linked} linked, {already} were already linked and {unlinked} not linked.",
+    "unlinked": {
+      "title": "Files not linked",
+      "file": "File",
+      "reason": "Reason"
+    },
+    "reason": {
+      "outside": "Link to a file outside the downloads folder",
+      "unreadable": "The file cannot be read",
+      "no_tags": "No tags or no title",
+      "not_found": "Not found on Deezer",
+      "not_in_catalog": "Album or track is blocked",
+      "error": "Error querying Deezer"
+    }
+  }
+}
