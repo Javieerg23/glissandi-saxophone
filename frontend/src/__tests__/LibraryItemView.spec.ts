@@ -64,9 +64,9 @@ describe('LibraryItemView', () => {
   })
 
   it('no enlaza a la subida de audio sin esa ruta', async () => {
-    const { wrapper, router } = await open('/biblioteca/tracks/100')
-    // La subida es otra vista: puede estar ya en el router o no.
-    if (router.hasRoute('track-upload')) router.removeRoute('track-upload')
+    // Se abre un álbum: quitar la ruta con un enlace de subida ya pintado lo rompería.
+    const { wrapper, router } = await open('/biblioteca/albums/10')
+    router.removeRoute('track-upload')
     await router.push('/biblioteca/tracks/101')
     await vi.waitFor(() => expect(wrapper.find('h1').text()).toBe('Giorgio by Moroder'))
     expect(link(wrapper, 'Subir audio')).toBeUndefined()

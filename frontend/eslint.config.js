@@ -20,6 +20,7 @@ export default tseslint.config(
         HTMLInputElement: 'readonly',
         File: 'readonly',
         FormData: 'readonly',
+        XMLHttpRequest: 'readonly',
         Event: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',

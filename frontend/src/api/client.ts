@@ -22,14 +22,14 @@ export class ApiError extends Error {
   }
 }
 
-function kindOf(status: number): ApiErrorKind {
+export function kindOf(status: number): ApiErrorKind {
   if (status === 401) return 'unauthorized'
   if (status === 403) return 'forbidden'
   if (status === 404) return 'notFound'
   return status >= 500 ? 'server' : 'unknown'
 }
 
-function csrfToken(): string {
+export function csrfToken(): string {
   return document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/)?.[1] ?? ''
 }
 
