@@ -44,6 +44,9 @@
   "overrides": {
     "openapi-typescript": {
       "typescript": "$typescript"
-    }
+    },
+    "minimatch": "^11.0.1",
+    "glob": "^14.0.3",
+    "qs": "^6.17.1"
   }
 }
