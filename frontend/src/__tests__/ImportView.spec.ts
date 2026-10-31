@@ -150,18 +150,22 @@ describe('ImportView', () => {
     expect(wrapper.get('.selected h2').text()).toBe('Seleccionados (1)')
   })
 
-  it('enlaza a «Importar una carpeta» solo si esa vista existe', async () => {
-    const { wrapper } = await mountView(ImportView, '/importar')
-    expect(wrapper.get('a[href="/importar/carpeta"]').text()).toBe('Importar una carpeta')
-    const index = routes.findIndex((r) => r.name === 'import-folder')
-    const [folder] = routes.splice(index, 1)
-    try {
-      const { wrapper: unlinked } = await mountView(ImportView, '/importar')
-      expect(unlinked.text()).not.toContain('Importar una carpeta')
-    } finally {
-      if (folder) routes.splice(index, 0, folder)
-    }
-  })
+it('enlaza a «Importar una carpeta» solo si esa vista existe', async () => {
+  const { wrapper: linked } = await mountView(ImportView, '/importar')
+  expect(linked.get('a[href="/importar/carpeta"]').text()).toBe('Importar una carpeta')
+
+  // Sin la ruta de la carpeta, el enlace no aparece.
+  const index = routes.findIndex((r) => r.name === 'import-folder')
+  expect(index).toBeGreaterThanOrEqual(0)
+
+  const [folder] = routes.splice(index, 1)
+  try {
+    const { wrapper: unlinked } = await mountView(ImportView, '/importar')
+    expect(unlinked.text()).not.toContain('Importar una carpeta')
+  } finally {
+    if (folder) routes.splice(index, 0, folder)
+  }
+})
 
   it('tiene los mismos textos en español y en inglés', () => {
     const keys = (tree: object, prefix = ''): string[] =>

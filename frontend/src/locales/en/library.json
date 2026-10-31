@@ -1,0 +1,100 @@
+{
+  "library": {
+    "nav": "Library",
+    "title": "Library",
+    "tabs": "Item type",
+    "kind": {
+      "artists": "Artists",
+      "albums": "Albums",
+      "tracks": "Tracks"
+    },
+    "loading": "Loading…",
+    "pages": "Pages",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {page} · {count} in total",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back to the library",
+    "fields": {
+      "name": "Name",
+      "title": "Title",
+      "artists": "Artists",
+      "album": "Album",
+      "release_date": "Release date",
+      "duration": "Duration",
+      "downloaded": "Downloaded",
+      "track_number": "Track number",
+      "disc_number": "Disc number",
+      "isrc": "ISRC",
+      "deezer_id": "Deezer ID",
+      "musicbrainz_id": "MusicBrainz ID",
+      "image_url": "Image URL",
+      "cover_url": "Cover URL"
+    },
+    "filters": {
+      "search": "Search",
+      "ordering": "Sort by",
+      "any": "All",
+      "released_after": "Released from",
+      "released_before": "Released until",
+      "apply": "Apply",
+      "only_artist": "Only the chosen artist's.",
+      "only_album": "Only the chosen album's.",
+      "clear": "Clear filter"
+    },
+    "ordering": {
+      "default": "Default order",
+      "name": "Name (A-Z)",
+      "name_desc": "Name (Z-A)",
+      "title": "Title (A-Z)",
+      "title_desc": "Title (Z-A)",
+      "release_date": "Date (oldest first)",
+      "release_date_desc": "Date (newest first)",
+      "track_number": "Track number"
+    },
+    "links": {
+      "title": "Related",
+      "album": "View the album",
+      "albums": "View their albums",
+      "tracks": "View their tracks",
+      "upload": "Upload audio"
+    },
+    "edit": {
+      "title": "Edit",
+      "save": "Save changes",
+      "done": "Changes saved."
+    },
+    "artists": {
+      "title": "Artists",
+      "up": "Move {name} up",
+      "down": "Move {name} down",
+      "remove": "Remove {name}",
+      "search": "Search a catalogue artist",
+      "find": "Search",
+      "add": "Add",
+      "save": "Save artists",
+      "done": "Artists updated."
+    },
+    "history": {
+      "title": "History",
+      "type": {
+        "created": "Created",
+        "changed": "Changed",
+        "deleted": "Deleted"
+      },
+      "system": "System",
+      "revert": "Go back to this version",
+      "done": "Reverted to the chosen version."
+    },
+    "block": {
+      "action": "Block",
+      "title": "Block",
+      "done": "Blocked: it won't be imported or downloaded again.",
+      "confirm": {
+        "albums": "Block the album “{name}”? It won't be imported or downloaded again.",
+        "tracks": "Block the track “{name}”? It won't be imported or downloaded again."
+      }
+    }
+  }
+}
