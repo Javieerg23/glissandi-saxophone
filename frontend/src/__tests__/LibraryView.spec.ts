@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { messages } from '../locales'
 import libraryHandlers from '../mocks/handlers/library'
@@ -72,7 +72,8 @@ describe('LibraryView', () => {
       .find((a) => a.text() === 'Canciones')!
       .trigger('click')
     await settle()
-    expect(router.currentRoute.value.query).toEqual({ tab: 'tracks' })
+    await vi.waitFor(() => expect(router.currentRoute.value.query).toEqual({ tab: 'tracks' }))
+    await vi.waitFor(() => expect(wrapper.findAll('tbody tr')).toHaveLength(2))
     const rows = wrapper.findAll('tbody tr').map((r) => r.findAll('td').map((c) => c.text()))
     expect(rows[0]).toEqual(['Get Lucky', 'Daft Punk, Pharrell Williams', '6:09', 'Sí'])
     expect(rows[1]?.[3]).toBe('No')
@@ -88,19 +89,23 @@ describe('LibraryView', () => {
     expect(wrapper.text()).toContain('Fecha (más recientes primero)')
     await wrapper.get('form').trigger('submit')
     await settle()
-    expect(router.currentRoute.value.query).toEqual({
-      tab: 'albums',
-      search: 'random',
-      ordering: '-release_date',
-      released_after: '2010-01-01',
-      released_before: '2020-12-31',
-    })
-    expect(seen.at(-1)).toEqual({
-      search: 'random',
-      ordering: '-release_date',
-      released_after: '2010-01-01',
-      released_before: '2020-12-31',
-    })
+    await vi.waitFor(() =>
+      expect(router.currentRoute.value.query).toEqual({
+        tab: 'albums',
+        search: 'random',
+        ordering: '-release_date',
+        released_after: '2010-01-01',
+        released_before: '2020-12-31',
+      }),
+    )
+    await vi.waitFor(() =>
+      expect(seen.at(-1)).toEqual({
+        search: 'random',
+        ordering: '-release_date',
+        released_after: '2010-01-01',
+        released_before: '2020-12-31',
+      }),
+    )
   })
 
   it('filtra las canciones por descarga y recupera los filtros de la URL', async () => {
@@ -110,8 +115,10 @@ describe('LibraryView', () => {
     await wrapper.findAll('select')[1]!.setValue('false')
     await wrapper.get('form').trigger('submit')
     await settle()
-    expect(router.currentRoute.value.query).toMatchObject({ downloaded: 'false', search: 'get' })
-    expect(seen.at(-1)).toEqual({ search: 'get', downloaded: 'false' })
+    await vi.waitFor(() =>
+      expect(router.currentRoute.value.query).toMatchObject({ downloaded: 'false', search: 'get' }),
+    )
+    await vi.waitFor(() => expect(seen.at(-1)).toEqual({ search: 'get', downloaded: 'false' }))
   })
 
   it('muestra el filtro por álbum y lo quita', async () => {
@@ -119,7 +126,7 @@ describe('LibraryView', () => {
     expect(wrapper.text()).toContain('Solo las del álbum elegido.')
     await button(wrapper, 'Quitar filtro').trigger('click')
     await settle()
-    expect(router.currentRoute.value.query).toEqual({ tab: 'tracks' })
+    await vi.waitFor(() => expect(router.currentRoute.value.query).toEqual({ tab: 'tracks' }))
     expect(wrapper.text()).not.toContain('Solo las del álbum elegido.')
   })
 
@@ -139,12 +146,12 @@ describe('LibraryView', () => {
     expect(button(wrapper, 'Anterior').attributes('disabled')).toBeDefined()
     await button(wrapper, 'Siguiente').trigger('click')
     await settle()
-    expect(router.currentRoute.value.query.page).toBe('2')
-    expect(wrapper.text()).toContain('Artista 2')
+    await vi.waitFor(() => expect(router.currentRoute.value.query.page).toBe('2'))
+    await vi.waitFor(() => expect(wrapper.text()).toContain('Artista 2'))
     expect(button(wrapper, 'Siguiente').attributes('disabled')).toBeDefined()
     await button(wrapper, 'Anterior').trigger('click')
-    await settle()
-    expect(router.currentRoute.value.query.page).toBe('1')
+    await vi.waitFor(() => expect(wrapper.text()).toContain('Artista 1'))
+    await vi.waitFor(() => expect(router.currentRoute.value.query.page).toBe('1'))
   })
 
   it('avisa mientras carga y muestra el error de la API', async () => {
@@ -174,7 +181,7 @@ describe('LibraryView', () => {
   ])('lleva el enlace %s a la ficha cuando nombra un elemento', async (from, to) => {
     const { router } = await mount('/panel')
     await router.push(from)
-    expect(router.currentRoute.value.fullPath).toBe(to)
+    await vi.waitFor(() => expect(router.currentRoute.value.fullPath).toBe(to))
   })
 
   it('formatea la duración y deja vacía la desconocida', () => {

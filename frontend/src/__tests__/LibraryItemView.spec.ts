@@ -70,7 +70,9 @@ describe('LibraryItemView', () => {
     router.addRoute({ path: '/subir/:id', name: 'track-upload', component: { render: () => null } })
     await router.push('/biblioteca/tracks/100')
     await settle()
-    expect(link(wrapper, 'Subir audio')?.attributes('href')).toBe('/subir/100')
+    await vi.waitFor(() =>
+      expect(link(wrapper, 'Subir audio')?.attributes('href')).toBe('/subir/100'),
+    )
     expect(wrapper.get('.item__downloaded').text()).toBe('Sí')
   })
 
@@ -79,8 +81,8 @@ describe('LibraryItemView', () => {
     expect(wrapper.text()).not.toContain('ISRC')
     await link(wrapper, 'Ver el álbum')!.trigger('click')
     await settle()
-    expect(router.currentRoute.value.path).toBe('/biblioteca/albums/10')
-    expect(wrapper.get('h1').text()).toBe('Random Access Memories')
+    await vi.waitFor(() => expect(router.currentRoute.value.path).toBe('/biblioteca/albums/10'))
+    await vi.waitFor(() => expect(wrapper.find('h1').text()).toBe('Random Access Memories'))
     expect(wrapper.get('img').attributes('src')).toBe('https://example.com/ram.jpg')
     expect(link(wrapper, 'Ver sus canciones')?.attributes('href')).toBe(
       '/biblioteca?tab=tracks&album=10',

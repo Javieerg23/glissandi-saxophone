@@ -8,6 +8,9 @@ import { server } from '../mocks/server'
  * haya pintado sus respuestas. `flushPromises` solo no basta: una respuesta simulada puede
  * tardar más de una vuelta del bucle (en CI, o tras cambiar de ruta) y algunas encadenan otra.
  *
+ * Una petición lanzada tras cambiar de ruta aún puede no haber empezado: después de una
+ * navegación, las comprobaciones esperan además a su propio resultado con `vi.waitFor`.
+ *
  * Counts in-flight requests and returns a wait until none is left and the view has rendered.
  */
 export function trackRequests(): () => Promise<void> {
