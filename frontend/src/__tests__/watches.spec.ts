@@ -1,12 +1,12 @@
 import { flushPromises } from '@vue/test-utils'
 import { http, HttpResponse } from 'msw'
-import { afterEach, describe, expect, it, onTestFinished, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest'
 
 import type { components } from '../api/schema'
 import { POLL_MS } from '../composables/useJobRun'
 import { messages } from '../locales'
 import { server } from '../mocks/server'
-import { watches } from '../mocks/handlers/watches'
+import watchHandlers, { watches } from '../mocks/handlers/watches'
 import WatchFormView from '../views/watches/WatchFormView.vue'
 import WatchesView from '../views/watches/WatchesView.vue'
 import WatchView from '../views/watches/WatchView.vue'
@@ -24,7 +24,28 @@ Object.assign(HTMLDialogElement.prototype, {
   },
 })
 
+// Otras vistas simulan también `catalog/artists/` con sus propios datos: aquí mandan los de Novedades.
+beforeEach(() => server.use(...watchHandlers))
 afterEach(() => vi.useRealTimers())
+
+// Peticiones a MSW sin responder: una sola vuelta de `flushPromises` no basta en una máquina
+// lenta (navegación, petición y respuesta encadenadas), así que se espera a que no quede ninguna.
+let inflight = 0
+server.events.on('request:start', () => void inflight++)
+server.events.on('response:mocked', () => void inflight--)
+
+/** Espera a que terminen las peticiones en curso y se pinte el resultado. */
+async function settle(): Promise<void> {
+  do await flushPromises()
+  while (inflight > 0)
+  await flushPromises()
+}
+
+async function mount(...args: Parameters<typeof mountView>) {
+  const ctx = await mountView(...args)
+  await settle()
+  return ctx
+}
 
 type Wrapper = Awaited<ReturnType<typeof mountView>>['wrapper']
 
@@ -67,7 +88,7 @@ function captureSave(method: 'post' | 'patch', reply: () => Response) {
 
 describe('WatchesView', () => {
   it('lista las búsquedas con artistas, intervalo y estado', async () => {
-    const { wrapper } = await mountView(WatchesView, '/novedades')
+    const { wrapper } = await mount(WatchesView, '/novedades')
     const rows = wrapper.findAll('tbody tr').map((r) => r.text())
     expect(rows[0]).toContain('Urbano')
     expect(rows[0]).toContain('Bad Bunny, Rauw Alejandro')
@@ -89,20 +110,20 @@ describe('WatchesView', () => {
         })
       }),
     )
-    const { wrapper, router } = await mountView(WatchesView, '/novedades')
+    const { wrapper, router } = await mount(WatchesView, '/novedades')
     expect(button(wrapper, 'Anterior').attributes('disabled')).toBeDefined()
     await button(wrapper, 'Siguiente').trigger('click')
-    await flushPromises()
+    await settle()
     expect(router.currentRoute.value.query.page).toBe('2')
     expect(wrapper.text()).toContain('1 hora')
     await button(wrapper, 'Anterior').trigger('click')
-    await flushPromises()
+    await settle()
     expect(router.currentRoute.value.query.page).toBe('1')
   })
 
   it('muestra el error de la API', async () => {
     server.use(http.get('/api/v1/watches/', () => new HttpResponse(null, { status: 500 })))
-    const { wrapper } = await mountView(WatchesView, '/novedades')
+    const { wrapper } = await mount(WatchesView, '/novedades')
     expect(wrapper.get('[role="alert"]').text()).toBe(
       'El servidor ha fallado. Inténtalo más tarde.',
     )
@@ -112,7 +133,7 @@ describe('WatchesView', () => {
 describe('WatchFormView', () => {
   it('da de alta con artistas buscados en el catálogo y en orden', async () => {
     const bodies = capture('POST')
-    const { wrapper, router } = await mountView(WatchFormView, '/novedades/nueva')
+    const { wrapper, router } = await mount(WatchFormView, '/novedades/nueva')
     expect(wrapper.get('h1').text()).toBe('Nueva búsqueda de novedades')
     expect(wrapper.text()).toContain('Todavía no hay artistas.')
 
@@ -121,14 +142,14 @@ describe('WatchFormView', () => {
     await wrapper.findAll('input[type="checkbox"]')[0]?.setValue(true)
     await fill(wrapper, 'Buscar en el catálogo', 'r')
     await wrapper.get('form[name="artist-search"]').trigger('submit')
-    await flushPromises()
+    await settle()
     await button(wrapper, 'Añadir Rosalía').trigger('click')
     await button(wrapper, 'Añadir Rauw Alejandro').trigger('click')
     expect(wrapper.text()).toContain('Ningún artista del catálogo coincide.')
     await button(wrapper, 'Subir Rauw Alejandro').trigger('click')
 
     await wrapper.get('form[name="watch"]').trigger('submit')
-    await flushPromises()
+    await settle()
     expect(bodies).toEqual([
       {
         name: 'Mis novedades',
@@ -143,7 +164,7 @@ describe('WatchFormView', () => {
 
   it('no ofrece artistas ya elegidos y permite bajar y quitar', async () => {
     const bodies = capture('PATCH')
-    const { wrapper } = await mountView(WatchFormView, '/novedades/1/editar')
+    const { wrapper } = await mount(WatchFormView, '/novedades/1/editar')
     expect(wrapper.get('h1').text()).toBe('Editar «Urbano»')
     expect(wrapper.findAll('.artists__chosen li').map((li) => li.text().split(/\s/)[0])).toEqual([
       'Bad',
@@ -153,7 +174,7 @@ describe('WatchFormView', () => {
     expect(button(wrapper, 'Bajar Rauw Alejandro').attributes('disabled')).toBeDefined()
 
     await wrapper.get('form[name="artist-search"]').trigger('submit')
-    await flushPromises()
+    await settle()
     expect(wrapper.findAll('.artists__results li').map((li) => li.text())).toEqual([
       'Añadir Rosalía',
     ])
@@ -162,7 +183,7 @@ describe('WatchFormView', () => {
     await button(wrapper, 'Quitar Bad Bunny').trigger('click')
     await wrapper.findAll('input[type="checkbox"]')[1]?.setValue(false)
     await wrapper.get('form[name="watch"]').trigger('submit')
-    await flushPromises()
+    await settle()
     expect(bodies).toEqual([
       { name: 'Urbano', interval_hours: 24, auto_download: false, enabled: false, artist_ids: [3] },
     ])
@@ -180,9 +201,9 @@ describe('WatchFormView', () => {
         { status: 400 },
       ),
     )
-    const { wrapper, router } = await mountView(WatchFormView, '/novedades/nueva')
+    const { wrapper, router } = await mount(WatchFormView, '/novedades/nueva')
     await wrapper.get('form[name="watch"]').trigger('submit')
-    await flushPromises()
+    await settle()
     const errors = wrapper.findAll('.field__error').map((p) => p.text())
     expect(errors).toEqual([
       'Ya existe una vigilancia con este nombre.',
@@ -195,18 +216,18 @@ describe('WatchFormView', () => {
 
   it('un 400 solo de campos no pone aviso general', async () => {
     captureSave('post', () => HttpResponse.json({ name: ['Obligatorio.'] }, { status: 400 }))
-    const { wrapper } = await mountView(WatchFormView, '/novedades/nueva')
+    const { wrapper } = await mount(WatchFormView, '/novedades/nueva')
     await wrapper.get('form[name="watch"]').trigger('submit')
-    await flushPromises()
+    await settle()
     expect(wrapper.get('.field__error').text()).toBe('Obligatorio.')
     expect(wrapper.find('.alert').exists()).toBe(false)
   })
 
   it('otros fallos van al aviso general', async () => {
     captureSave('post', () => new HttpResponse(null, { status: 500 }))
-    const { wrapper } = await mountView(WatchFormView, '/novedades/nueva')
+    const { wrapper } = await mount(WatchFormView, '/novedades/nueva')
     await wrapper.get('form[name="watch"]').trigger('submit')
-    await flushPromises()
+    await settle()
     expect(wrapper.get('.alert').text()).toBe('El servidor ha fallado. Inténtalo más tarde.')
     expect(wrapper.find('.field__error').exists()).toBe(false)
   })
@@ -216,17 +237,17 @@ describe('WatchFormView', () => {
       http.get('/api/v1/watches/:id/', () => new HttpResponse(null, { status: 404 })),
       http.get('/api/v1/catalog/artists/', () => new HttpResponse(null, { status: 500 })),
     )
-    const { wrapper } = await mountView(WatchFormView, '/novedades/5/editar')
+    const { wrapper } = await mount(WatchFormView, '/novedades/5/editar')
     expect(wrapper.get('.alert').text()).toBe('No se ha encontrado lo que buscabas.')
     await wrapper.get('form[name="artist-search"]').trigger('submit')
-    await flushPromises()
+    await settle()
     expect(wrapper.get('.alert').text()).toBe('El servidor ha fallado. Inténtalo más tarde.')
   })
 })
 
 describe('WatchView', () => {
   it('muestra los datos y el historial de comprobaciones', async () => {
-    const { wrapper } = await mountView(WatchView, '/novedades/1')
+    const { wrapper } = await mount(WatchView, '/novedades/1')
     expect(wrapper.get('h1').text()).toBe('Urbano')
     expect(wrapper.text()).toContain('Activa · 24 horas')
     expect(wrapper.text()).toContain('Bad Bunny, Rauw Alejandro')
@@ -249,18 +270,17 @@ describe('WatchView', () => {
         })
       }),
     )
-    const { wrapper, router } = await mountView(WatchView, '/novedades/2')
+    const { wrapper, router } = await mount(WatchView, '/novedades/2')
     expect(wrapper.text()).toContain('Pausada · 6 horas · Descarga automática')
     await button(wrapper, 'Siguiente').trigger('click')
-    await flushPromises()
+    await settle()
     expect(router.currentRoute.value.query.page).toBe('2')
     await button(wrapper, 'Anterior').trigger('click')
-    await flushPromises()
+    await settle()
     expect(router.currentRoute.value.query.page).toBe('1')
   })
 
   it('comprueba ahora y recarga el historial al terminar', async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true })
     const launched: unknown[] = []
     let runsCalls = 0
     const job = (status: JobRun['status']): JobRun => ({
@@ -290,22 +310,23 @@ describe('WatchView', () => {
         return HttpResponse.json({ count: 0, next: null, previous: null, results: [] })
       }),
     )
-    const { wrapper } = await mountView(WatchView, '/novedades/1')
+    const { wrapper } = await mount(WatchView, '/novedades/1')
+    vi.useFakeTimers({ shouldAdvanceTime: true })
     await button(wrapper, 'Comprobar ahora').trigger('click')
-    await flushPromises()
+    await settle()
     expect(launched).toEqual([{ kind: 'watch_check', params: { watch_id: 1 } }])
     expect(button(wrapper, 'Comprobar ahora').attributes('disabled')).toBeDefined()
     expect(wrapper.text()).toContain('En curso')
     expect(runsCalls).toBe(1)
     await vi.advanceTimersByTimeAsync(POLL_MS)
-    await flushPromises()
+    await settle()
     expect(wrapper.text()).toContain('Terminada')
     expect(runsCalls).toBe(2)
   })
 
   it('borra tras confirmar y vuelve a la lista', async () => {
     const deletes = capture('DELETE')
-    const { wrapper, router } = await mountView(WatchView, '/novedades/1')
+    const { wrapper, router } = await mount(WatchView, '/novedades/1')
     await button(wrapper, 'Borrar').trigger('click')
     expect(wrapper.get('dialog').attributes('open')).toBeDefined()
     expect(wrapper.get('dialog').text()).toContain('¿Borrar «Urbano»?')
@@ -313,7 +334,7 @@ describe('WatchView', () => {
     expect(wrapper.get('dialog').attributes('open')).toBeUndefined()
     await button(wrapper, 'Borrar').trigger('click')
     await button(wrapper, 'Sí, borrar').trigger('click')
-    await flushPromises()
+    await settle()
     expect(deletes).toHaveLength(1)
     expect(router.currentRoute.value.name).toBe('watches')
   })
@@ -327,22 +348,22 @@ describe('WatchView', () => {
         ),
       ),
     )
-    const { wrapper, router } = await mountView(WatchView, '/novedades/1')
+    const { wrapper, router } = await mount(WatchView, '/novedades/1')
     await button(wrapper, 'Borrar').trigger('click')
     await button(wrapper, 'Sí, borrar').trigger('click')
-    await flushPromises()
+    await settle()
     expect(wrapper.get('.alert').text()).toContain('no se puede borrar')
     expect(router.currentRoute.value.name).toBe('watch')
   })
 
   it('avisa si no puede cargar el historial', async () => {
     server.use(http.get('/api/v1/watches/1/runs/', () => new HttpResponse(null, { status: 500 })))
-    const { wrapper } = await mountView(WatchView, '/novedades/1')
+    const { wrapper } = await mount(WatchView, '/novedades/1')
     expect(wrapper.get('.alert').text()).toBe('El servidor ha fallado. Inténtalo más tarde.')
   })
 
   it('avisa si la búsqueda no existe', async () => {
-    const { wrapper } = await mountView(WatchView, '/novedades/99')
+    const { wrapper } = await mount(WatchView, '/novedades/99')
     expect(wrapper.get('.alert').text()).toBe('No encontrado.')
     expect(wrapper.find('h1').exists()).toBe(false)
   })
