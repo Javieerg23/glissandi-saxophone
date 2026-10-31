@@ -61,6 +61,37 @@ describe('api()', () => {
     expect(token).toBe('')
   })
 
+  it('lee su cookie CSRF entre otras, no una que solo acabe igual', async () => {
+    document.cookie = 'xcsrftoken=falso'
+    document.cookie = 'csrftoken=bueno'
+    let token: string | null = null
+    server.use(
+      http.post('/api/t/', ({ request }) => {
+        token = request.headers.get('X-CSRFToken')
+        return new HttpResponse(null, { status: 204 })
+      }),
+    )
+    await api('/api/t/', { method: 'POST' })
+    expect(token).toBe('bueno')
+    document.cookie = 'xcsrftoken=; max-age=0'
+  })
+
+  it('declara JSON solo cuando envía un cuerpo JSON', async () => {
+    const seen: (string | null)[][] = []
+    server.use(
+      http.all('/api/t/', ({ request }) => {
+        seen.push([request.headers.get('Accept'), request.headers.get('Content-Type')])
+        return new HttpResponse(null, { status: 204 })
+      }),
+    )
+    await api('/api/t/', { method: 'POST', body: { a: 1 } })
+    await api('/api/t/', { method: 'POST' })
+    expect(seen).toEqual([
+      ['application/json', 'application/json'],
+      ['application/json', null],
+    ])
+  })
+
   it.each([
     [401, 'unauthorized'],
     [403, 'forbidden'],
@@ -93,6 +124,25 @@ describe('stores', () => {
     expect(s.isAuthenticated).toBe(false)
     await s.login('demo', 'x')
     expect(s.user?.username).toBe('demo')
+  })
+
+  it('session: el login envía usuario y contraseña', async () => {
+    let sent: unknown = null
+    server.use(
+      http.post('/api/v1/accounts/login/', async ({ request }) => {
+        sent = await request.json()
+        return HttpResponse.json({ username: 'ana', role: 'usuario' })
+      }),
+    )
+    await useSessionStore().login('ana', 'secreta')
+    expect(sent).toEqual({ username: 'ana', password: 'secreta' })
+  })
+
+  it('session: 403 también significa sin sesión', async () => {
+    server.use(http.get('/api/v1/accounts/me/', () => new HttpResponse(null, { status: 403 })))
+    const s = useSessionStore()
+    await s.fetchMe()
+    expect(s.user).toBeNull()
   })
 
   it('session: 401 significa sin sesión, no error', async () => {
